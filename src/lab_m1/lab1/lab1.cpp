@@ -33,6 +33,18 @@ void Lab1::Init()
         Mesh* mesh = new Mesh("box");
         mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "primitives"), "box.obj");
         meshes[mesh->GetMeshID()] = mesh;
+
+        mesh = new Mesh("quad");
+        mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "primitives"), "quad.obj");
+        meshes[mesh->GetMeshID()] = mesh;
+
+        mesh = new Mesh("teapot");
+        mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "primitives"), "teapot.obj");
+        meshes[mesh->GetMeshID()] = mesh;
+
+        mesh = new Mesh("sphere");
+        mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "primitives"), "sphere.obj");
+        meshes[mesh->GetMeshID()] = mesh;
     }
 
     // TODO(student): Load some more meshes. The value of RESOURCE_PATH::MODELS
@@ -55,7 +67,10 @@ void Lab1::Update(float deltaTimeSeconds)
     // TODO(student): Generalize the arguments of `glClearColor`.
     // You can, for example, declare three variables in the class header,
     // that will store the color components (red, green, blue).
-    glClearColor(0, 0, 0, 1);
+    if (change_color)
+        glClearColor(0, 0, 0, 1);
+    else
+        glClearColor(1, 1, 1, 1);
 
     // Clears the color buffer (using the previously set color) and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -64,10 +79,36 @@ void Lab1::Update(float deltaTimeSeconds)
     glViewport(0, 0, resolution.x, resolution.y);
 
     // Render the object
-    RenderMesh(meshes["box"], glm::vec3(1, 0.5f, 0), glm::vec3(0.5f));
+    RenderMesh(meshes[shapes[shape_index]], shape_coord, glm::vec3(0.5f));
 
     // Render the object again but with different properties
     RenderMesh(meshes["box"], glm::vec3(-1, 0.5f, 0));
+
+    RenderMesh(meshes["sphere"], jumper_coord);
+
+    if (jumping) {
+        if (jumper_coord.y < peak_coord.y) {
+            jumper_coord.y += deltaTimeSeconds * acc;
+            acc += deltaTimeSeconds * 3;
+        }
+        else {
+            jumping = false;
+            falling = true;
+            acc = 1.0f;
+        }
+    }
+
+    if (falling) {
+        if (jumper_coord.y > initial_coord.y) {
+            jumper_coord.y -= deltaTimeSeconds * acc;
+            acc += deltaTimeSeconds * 3;
+        }
+        else {
+            falling = false;
+            acc = 1.0f;
+        }
+    }
+        
 
     // TODO(student): We need to render (a.k.a. draw) the mesh that
     // was previously loaded. We do this using `RenderMesh`. Check the
@@ -97,6 +138,24 @@ void Lab1::OnInputUpdate(float deltaTime, int mods)
     // a mesh instance on all three axes. You will also need to
     // generalize the position used by `RenderMesh`.
 
+    // X axis
+    if (window->KeyHold(GLFW_KEY_W))
+        shape_coord.x += deltaTime;
+    if (window->KeyHold(GLFW_KEY_S))
+        shape_coord.x -= deltaTime;
+
+    // Y axis
+    if (window->KeyHold(GLFW_KEY_E))
+        shape_coord.y += deltaTime;
+    if (window->KeyHold(GLFW_KEY_Q))
+        shape_coord.y -= deltaTime;
+
+    // Z axis
+    if (window->KeyHold(GLFW_KEY_D))
+        shape_coord.z += deltaTime;
+    if (window->KeyHold(GLFW_KEY_A))
+        shape_coord.z -= deltaTime;
+
 }
 
 
@@ -105,7 +164,15 @@ void Lab1::OnKeyPress(int key, int mods)
     // Add key press event
     if (key == GLFW_KEY_F) {
         // TODO(student): Change the values of the color components.
+        change_color = !change_color;
+    }
 
+    if (key == GLFW_KEY_G) {
+        shape_index = (shape_index + 1) % 3;
+    }
+
+    if (key == GLFW_KEY_SPACE && jumping == false && falling == false) {
+        jumping = true;
     }
 
     // TODO(student): Add a key press event that will let you cycle

@@ -37,12 +37,15 @@ void Lab3::Init()
     GetCameraInput()->SetActive(false);
 
     glm::vec3 corner = glm::vec3(0, 0, 0);
-    float squareSide = 100;
+    
 
     // TODO(student): Compute coordinates of a square's center, and store
     // then in the `cx` and `cy` class variables (see the header). Use
     // `corner` and `squareSide`. These two class variables will be used
     // in the `Update()` function. Think about it, why do you need them?
+
+    cx = corner.x + squareSide / 2;
+    cy = corner.y + squareSide / 2;
 
     // Initialize tx and ty (the translation steps)
     translateX = 0;
@@ -63,6 +66,12 @@ void Lab3::Init()
 
     Mesh* square3 = object2D::CreateSquare("square3", corner, squareSide, glm::vec3(0, 0, 1));
     AddMeshToList(square3);
+
+    Mesh* topCar = object2D::CreateRectangle("topCar", corner, lenghtTop, width, glm::vec3(0, 1, 0), false);
+    AddMeshToList(topCar);
+
+    Mesh* bottomCar = object2D::CreateRectangle("bottomCar", corner, lenghtBotton, width, glm::vec3(0, 1, 1), true);
+    AddMeshToList(bottomCar);
 }
 
 
@@ -85,8 +94,39 @@ void Lab3::Update(float deltaTimeSeconds)
     // class header, and if you need more of them to complete the task,
     // add them over there!
 
+
+    carPos += carDir * 100 * deltaTimeSeconds;
+    if (carPos > carDist) {
+        carDir = -1;
+    }
+    else if (currentScale < 0) {
+        carDir = 1;
+    }
+
+    // Translation
+    currentPos += 200 * deltaTimeSeconds * dir;
+    if (currentPos > translateDist) {
+        dir = -1;
+    }
+    else if (currentPos < 0)
+        dir = 1;
+
+    // Rotation
+    angularStep += 2 * deltaTimeSeconds;
+
+    // Scaling
+    currentScale += scaleDir * deltaTimeSeconds;
+    if (currentScale > maxScale) {
+        scaleDir = -1;
+    }
+    else if (currentScale < 0) {
+        scaleDir = 1;
+    }
+
     modelMatrix = glm::mat3(1);
     modelMatrix *= transform2D::Translate(150, 250);
+    modelMatrix *= transform2D::Translate(0, currentPos);
+ 
     // TODO(student): Create animations by multiplying the current
     // transform matrix with the matrices you just implemented.
     // Remember, the last matrix in the chain will take effect first!
@@ -95,19 +135,47 @@ void Lab3::Update(float deltaTimeSeconds)
 
     modelMatrix = glm::mat3(1);
     modelMatrix *= transform2D::Translate(400, 250);
+    modelMatrix *= transform2D::Rotate(angularStep);
     // TODO(student): Create animations by multiplying the current
     // transform matrix with the matrices you just implemented
     // Remember, the last matrix in the chain will take effect first!
 
     RenderMesh2D(meshes["square2"], shaders["VertexColor"], modelMatrix);
 
+
+
     modelMatrix = glm::mat3(1);
     modelMatrix *= transform2D::Translate(650, 250);
+    modelMatrix *= transform2D::Translate(cx, cy);
+    modelMatrix *= transform2D::Scale(currentScale, currentScale);
+    modelMatrix *= transform2D::Translate(-cx, -cy);
     // TODO(student): Create animations by multiplying the current
     // transform matrix with the matrices you just implemented
     // Remember, the last matrix in the chain will take effect first!
 
     RenderMesh2D(meshes["square3"], shaders["VertexColor"], modelMatrix);
+
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform2D::Translate((lenghtBotton - lenghtTop) / 2 + carPos, width + 2 * squareSide);
+    RenderMesh2D(meshes["topCar"], shaders["VertexColor"], modelMatrix);
+
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform2D::Translate(carPos, 2 * squareSide);
+    RenderMesh2D(meshes["bottomCar"], shaders["VertexColor"], modelMatrix);
+
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform2D::Translate(squareSide + carPos, squareSide);
+    modelMatrix *= transform2D::Translate(cx, cy);
+    modelMatrix *= transform2D::Rotate(angularStep);
+    modelMatrix *= transform2D::Translate(-cx, -cy);
+    RenderMesh2D(meshes["square1"], shaders["VertexColor"], modelMatrix);
+
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform2D::Translate(lenghtBotton - 2 * squareSide + carPos, squareSide);
+    modelMatrix *= transform2D::Translate(cx, cy);
+    modelMatrix *= transform2D::Rotate(angularStep);
+    modelMatrix *= transform2D::Translate(-cx, -cy);
+    RenderMesh2D(meshes["square1"], shaders["VertexColor"], modelMatrix);
 }
 
 
@@ -124,6 +192,7 @@ void Lab3::FrameEnd()
 
 void Lab3::OnInputUpdate(float deltaTime, int mods)
 {
+
 }
 
 

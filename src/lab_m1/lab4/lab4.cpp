@@ -98,6 +98,8 @@ void Lab4::Update(float deltaTimeSeconds)
 
     // TODO(student): render the scene again, in the new viewport
     DrawCoordinateSystem();
+    RenderScene();
+
 }
 
 void Lab4::FrameEnd()
@@ -113,7 +115,59 @@ void Lab4::FrameEnd()
 
 void Lab4::OnInputUpdate(float deltaTime, int mods)
 {
+    float moveFactor = 5;
+    float scaleFactor = 2;
+
     // TODO(student): Add transformation logic
+    if (window->KeyHold(GLFW_KEY_D)) {
+        translateX += moveFactor * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_A)) {
+        translateX -= moveFactor * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_R)) {
+        translateY += moveFactor * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_F)) {
+        translateY -= moveFactor * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_S)) {
+        translateZ += moveFactor * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_W)) {
+        translateZ -= moveFactor * deltaTime;
+    }
+
+
+    if (window->KeyHold(GLFW_KEY_1)) {
+        scaleX += scaleFactor * deltaTime;
+        scaleY += scaleFactor * deltaTime;
+        scaleZ += scaleFactor * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_2)) {
+        scaleX -= scaleFactor * deltaTime;
+        scaleY -= scaleFactor * deltaTime;
+        scaleZ -= scaleFactor * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_3)) {
+        angularStepOX += deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_4)) {
+        angularStepOX -= deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_5)) {
+        angularStepOZ += deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_6)) {
+        angularStepOZ -= deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_7)) {
+        angularStepOY += deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_8)) {
+        angularStepOY -= deltaTime;
+    }
 
 }
 
@@ -136,8 +190,41 @@ void Lab4::OnKeyPress(int key, int mods)
             break;
         }
     }
+
+    float viewportMoveStep = 10;
     
     // TODO(student): Add viewport movement and scaling logic
+    if (key == GLFW_KEY_I)
+    {
+        miniViewportArea.y += viewportMoveStep;
+    }
+    if (key == GLFW_KEY_J)
+    {
+        miniViewportArea.x -= viewportMoveStep;
+    }
+    if (key == GLFW_KEY_L)
+    {
+        miniViewportArea.x += viewportMoveStep;
+    }
+    if (key == GLFW_KEY_K)
+    {
+        miniViewportArea.y -= viewportMoveStep;
+    }
+
+    glm::ivec2 resolution = window->GetResolution();
+    float viewportScaleXStep = resolution.x / 25;
+    float viewportScaleYStep = resolution.y / 25;
+
+    if (key == GLFW_KEY_O)
+    {
+        miniViewportArea.height += viewportScaleYStep;
+        miniViewportArea.width += viewportScaleXStep;
+    }
+    if (key == GLFW_KEY_U)
+    {
+        miniViewportArea.height -= viewportScaleYStep;
+        miniViewportArea.width -= viewportScaleXStep;
+    }
 }
 
 

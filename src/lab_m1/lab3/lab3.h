@@ -34,6 +34,24 @@ namespace m1
         float scaleX, scaleY;
         float angularStep;
 
+        float currentPos = 0;
+        float dir = 1;
+        const float translateDist = 200;
+
+        float currentScale = 1;
+        float scaleDir = 1;
+        const float maxScale = 5;
+
+        float lenghtTop = 300;
+        float lenghtBotton = 500;
+        float width = 200;
+
+        float squareSide = 100;
+
+        float carPos = 0;
+        float carDir = 1;
+        const float carDist = 600;
+
         // TODO(student): If you need any other class variables, define them here.
 
     };
