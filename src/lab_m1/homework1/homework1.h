@@ -57,9 +57,15 @@ namespace m1
 
 		void SetViewportArea(const ViewportSpace& viewSpace, glm::vec3 colorColor = glm::vec3(0), bool clear = true);
 
+		void createMeshes();
+		inline void drawBackground(glm::mat3& visMatrix);
+
 	private:
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
 		glm::mat3 modelMatrix, visMatrix;
+		
+		const float logicSpaceWidth = 1600;
+		const float logicSpaceHeigth = 1000;
 	};
 }   // namespace m1
