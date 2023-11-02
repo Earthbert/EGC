@@ -21,4 +21,23 @@ namespace hw_object2D
 		float width,
 		glm::vec3 color,
 		bool fill, float depth = 0);
+
+	Mesh* CreateHexagon(
+		const std::string& name,
+		float radius,
+		glm::vec3 color,
+		bool fill, float depth = 0);
+
+	Mesh* CreateStar(
+		const std::string& name,
+		float radius,
+		float innerRadius,
+		glm::vec3 color,
+		bool fill, float depth = 0);
+
+	Mesh* CreateRomb(
+		const std::string& name,
+		float radius,
+		glm::vec3 color,
+		float depth = 0);
 }

@@ -134,6 +134,22 @@ void Homework1::DrawScene(glm::mat3 visMatrix)
 
 	modelMatrix = visMatrix * transform2D::Translate(300, 600);
 	RenderMesh2D(meshes["rectangle"], shaders["VertexColor"], modelMatrix);
+
+	modelMatrix = visMatrix * transform2D::Translate(600, 600);
+	RenderMesh2D(meshes["hexagonFill"], shaders["VertexColor"], modelMatrix);
+
+	modelMatrix = visMatrix * transform2D::Translate(800, 600);
+	RenderMesh2D(meshes["hexagon"], shaders["VertexColor"], modelMatrix);
+
+	modelMatrix = visMatrix * transform2D::Translate(700, 700);
+	RenderMesh2D(meshes["star"], shaders["VertexColor"], modelMatrix);
+
+	modelMatrix = visMatrix * transform2D::Translate(1000, 700);
+	RenderMesh2D(meshes["starFill"], shaders["VertexColor"], modelMatrix);
+
+	modelMatrix = visMatrix * transform2D::Translate(100, 700);
+	RenderMesh2D(meshes["romb"], shaders["VertexColor"], modelMatrix);
+
 }
 
 
@@ -205,9 +221,24 @@ void Homework1::createMeshes() {
 	AddMeshToList(rectangle1);
 	Mesh* rectangle2 = hw_object2D::CreateRectangle("rectangle", 200, 100, glm::vec3(1, 1, 0), false);
 	AddMeshToList(rectangle2);
+	Mesh* hexagon1 = hw_object2D::CreateHexagon("hexagon", 50, glm::vec3(1, 1, 0), false);
+	AddMeshToList(hexagon1);
+	Mesh* hexagon2 = hw_object2D::CreateHexagon("hexagonFill", 50, glm::vec3(1, 1, 0), true);
+	AddMeshToList(hexagon2);
+	Mesh* star1 = hw_object2D::CreateStar("star", 50, 20, glm::vec3(1, 1, 0), false);
+	AddMeshToList(star1);
+	Mesh* star2 = hw_object2D::CreateStar("starFill", 50, 20, glm::vec3(1, 1, 0), true);
+	AddMeshToList(star2);
+	Mesh* romb = hw_object2D::CreateRomb("romb", 50, glm::vec3(1, 1, 0));
+	AddMeshToList(romb);
 }
 
 inline void Homework1::drawBackground(glm::mat3& visMatrix) {
 	modelMatrix = visMatrix * transform2D::Translate(logicSpaceWidth / 2, logicSpaceHeigth / 2);
 	RenderMesh2D(meshes["background"], shaders["VertexColor"], modelMatrix);
+}
+
+void Homework1::RenderMesh(Mesh* mesh, const glm::mat3& modelMatrix)
+{
+	RenderMesh2D(mesh, shaders["VertexColor"], modelMatrix);
 }

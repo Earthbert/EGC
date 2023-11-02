@@ -30,11 +30,16 @@ namespace m1
 			float height;
 		};
 
+		struct GameState
+		{
+		};
+
 	public:
 		Homework1();
 		~Homework1();
 
 		void Init() override;
+		void RenderMesh(Mesh* mesh, const glm::mat3& modelMatrix);
 
 	private:
 		void FrameStart() override;
@@ -64,8 +69,11 @@ namespace m1
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
 		glm::mat3 modelMatrix, visMatrix;
-		
+
 		const float logicSpaceWidth = 1600;
 		const float logicSpaceHeigth = 1000;
+
+		const int maxLives = 3;
+		const int maxStars = 10;
 	};
 }   // namespace m1
