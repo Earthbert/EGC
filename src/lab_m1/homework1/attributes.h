@@ -1,20 +1,16 @@
 #pragma once
 
-#include "lab_m1/homework1/homework1.h"
+#include "components/simple_scene.h"
 
-namespace m1 {
-	class Drawable
-	{
-	public:
-		Drawable(Homework1* world, glm::vec2 initialPos, Mesh* mesh);
-		~Drawable();
-		void draw(glm::mat3 visMatrix);
+class Drawable
+{
+public:
+	Drawable(glm::vec2 initialPos);
+	~Drawable();
 
-	private:
-		Homework1* world;
-		glm::vec2 initialPos;
-		Mesh* mesh;
-		glm::mat3 modelMatrix;
-	};
-}
+	const std::vector<std::pair<Mesh*, glm::mat3>>& getDrawData();
+protected:
+	glm::vec2 initialPos;
+	std::vector<std::pair<Mesh*, glm::mat3>> objectData;
+};
 

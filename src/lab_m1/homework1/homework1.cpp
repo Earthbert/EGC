@@ -1,3 +1,5 @@
+#include "lab_m1/homework1/attributes.h"
+#include "lab_m1/homework1/entities.h"
 #include "lab_m1/Homework1/Homework1.h"
 
 #include <vector>
@@ -39,7 +41,7 @@ void Homework1::Init()
 	logicSpace.width = logicSpaceWidth;   // logic width
 	logicSpace.height = logicSpaceHeigth;  // logic height
 
-	createMeshes();
+	CreatePermanentObjects();
 }
 
 // 2D visualization matrix
@@ -116,40 +118,30 @@ void Homework1::Update(float deltaTimeSeconds)
 	visMatrix = glm::mat3(1);
 	visMatrix *= VisualizationTransf2D(logicSpace, viewSpace);
 
-	DrawScene(visMatrix);
+	DrawScene();
 }
 
-void Homework1::DrawScene(glm::mat3 visMatrix)
+void Homework1::DrawScene()
 {
-	drawBackground(visMatrix);
+	drawBackground();
+	DrawUI();
+}
 
-	modelMatrix = visMatrix * transform2D::Translate(100, 300);
-	RenderMesh2D(meshes["squareFill"], shaders["VertexColor"], modelMatrix);
+void m1::Homework1::DrawUI()
+{
+	DrawObject(*homeBase);
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			DrawObject(*cells[i][j]);
+}
 
-	modelMatrix = visMatrix * transform2D::Translate(300, 300);
-	RenderMesh2D(meshes["square"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(100, 600);
-	RenderMesh2D(meshes["rectangleFill"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(300, 600);
-	RenderMesh2D(meshes["rectangle"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(600, 600);
-	RenderMesh2D(meshes["hexagonFill"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(800, 600);
-	RenderMesh2D(meshes["hexagon"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(700, 700);
-	RenderMesh2D(meshes["star"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(1000, 700);
-	RenderMesh2D(meshes["starFill"], shaders["VertexColor"], modelMatrix);
-
-	modelMatrix = visMatrix * transform2D::Translate(100, 700);
-	RenderMesh2D(meshes["romb"], shaders["VertexColor"], modelMatrix);
-
+void Homework1::DrawObject(Drawable& object)
+{
+	auto objectData = object.getDrawData();
+	for (auto& meshModelPair : objectData) {
+		modelMatrix = visMatrix * meshModelPair.second;
+		RenderMesh2D(meshModelPair.first, shaders["VertexColor"], modelMatrix);
+	}
 }
 
 
@@ -209,33 +201,18 @@ void Homework1::OnWindowResize(int width, int height)
 {
 }
 
-void Homework1::createMeshes() {
-	Mesh* background = hw_object2D::CreateRectangle("background", logicSpaceWidth, logicSpaceHeigth, glm::vec3(0, 0, 0), true, -1);
-	AddMeshToList(background);
+void m1::Homework1::CreatePermanentObjects()
+{
+	background = new Background(logicSpaceWidth, logicSpaceHeigth);
+	homeBase = new HomeBase();
 
-	Mesh* square1 = hw_object2D::CreateSquare("squareFill", 100, glm::vec3(1, 0, 0), true);
-	AddMeshToList(square1);
-	Mesh* square2 = hw_object2D::CreateSquare("square", 100, glm::vec3(0, 1, 0), false);
-	AddMeshToList(square2);
-	Mesh* rectangle1 = hw_object2D::CreateRectangle("rectangleFill", 200, 100, glm::vec3(1, 0, 1), true);
-	AddMeshToList(rectangle1);
-	Mesh* rectangle2 = hw_object2D::CreateRectangle("rectangle", 200, 100, glm::vec3(1, 1, 0), false);
-	AddMeshToList(rectangle2);
-	Mesh* hexagon1 = hw_object2D::CreateHexagon("hexagon", 50, glm::vec3(1, 1, 0), false);
-	AddMeshToList(hexagon1);
-	Mesh* hexagon2 = hw_object2D::CreateHexagon("hexagonFill", 50, glm::vec3(1, 1, 0), true);
-	AddMeshToList(hexagon2);
-	Mesh* star1 = hw_object2D::CreateStar("star", 50, 20, glm::vec3(1, 1, 0), false);
-	AddMeshToList(star1);
-	Mesh* star2 = hw_object2D::CreateStar("starFill", 50, 20, glm::vec3(1, 1, 0), true);
-	AddMeshToList(star2);
-	Mesh* romb = hw_object2D::CreateRomb("romb", 50, glm::vec3(1, 1, 0));
-	AddMeshToList(romb);
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			cells[i][j] = new Cell(i, j);
 }
 
-inline void Homework1::drawBackground(glm::mat3& visMatrix) {
-	modelMatrix = visMatrix * transform2D::Translate(logicSpaceWidth / 2, logicSpaceHeigth / 2);
-	RenderMesh2D(meshes["background"], shaders["VertexColor"], modelMatrix);
+inline void Homework1::drawBackground() {
+	DrawObject(*background);
 }
 
 void Homework1::RenderMesh(Mesh* mesh, const glm::mat3& modelMatrix)

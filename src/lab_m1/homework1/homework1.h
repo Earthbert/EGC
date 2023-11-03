@@ -1,7 +1,7 @@
 #pragma once
 
 #include "components/simple_scene.h"
-
+#include "lab_m1/homework1/entities.h"
 
 namespace m1
 {
@@ -30,10 +30,6 @@ namespace m1
 			float height;
 		};
 
-		struct GameState
-		{
-		};
-
 	public:
 		Homework1();
 		~Homework1();
@@ -55,25 +51,40 @@ namespace m1
 		void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 		void OnWindowResize(int width, int height) override;
 
-		void DrawScene(glm::mat3 visMatrix);
+		void CreatePermanentObjects();
+
+		void DrawObject(Drawable& object);
+
+		void DrawScene();
+		void DrawUI();
+
 
 		glm::mat3 VisualizationTransf2D(const LogicSpace& logicSpace, const ViewportSpace& viewSpace);
 		glm::mat3 VisualizationTransf2DUnif(const LogicSpace& logicSpace, const ViewportSpace& viewSpace);
 
 		void SetViewportArea(const ViewportSpace& viewSpace, glm::vec3 colorColor = glm::vec3(0), bool clear = true);
 
-		void createMeshes();
-		inline void drawBackground(glm::mat3& visMatrix);
+		inline void drawBackground();
 
 	private:
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
 		glm::mat3 modelMatrix, visMatrix;
 
-		const float logicSpaceWidth = 1600;
+		const float logicSpaceWidth = 1800;
 		const float logicSpaceHeigth = 1000;
 
-		const int maxLives = 3;
-		const int maxStars = 10;
+		struct GameState
+		{
+			const int maxLives = 3;
+			const int maxStars = 10;
+
+			int numLives = maxLives;
+			int numStars = 0;
+		} gameState;
+
+		HomeBase *homeBase;
+		Background *background;
+		Cell *cells[3][3];
 	};
 }   // namespace m1
