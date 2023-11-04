@@ -53,7 +53,7 @@ namespace m1
 		void DrawObject(Drawable& object);
 
 		void DrawScene();
-		void DrawUI();
+		inline void DrawUI();
 
 
 		glm::mat3 VisualizationTransf2D() const;
@@ -61,28 +61,27 @@ namespace m1
 
 		void SetViewportArea(glm::vec3 colorColor = glm::vec3(0), bool clear = true) const;
 
-		inline void drawBackground();
+		inline void DrawBackground();
 
 	private:
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
 		glm::mat3 modelMatrix, visMatrix;
 
-		const float logicSpaceWidth = 1800;
-		const float logicSpaceHeigth = 1000;
+		static constexpr int maxLives = 3;
+		static constexpr int maxStars = 12;
 
 		struct GameState {
-			const int maxLives = 3;
-			const int maxStars = 10;
-
 			int numLives = maxLives;
-			int numStars = 0;
+			int numStars = maxStars;
 		} gameState;
 
+		// UI Elements
 		HomeBase* homeBase;
 		Background* background;
 		Cell* cells[3][3];
-		RombPrice* rombPrices[4];
-
+		Price* rombPrices[4];
+		Resource* resources[maxStars];
+		Life* lives[maxLives];
 	};
 }   // namespace m1

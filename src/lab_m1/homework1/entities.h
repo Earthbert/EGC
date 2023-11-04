@@ -2,11 +2,23 @@
 
 #include <lab_m1/homework1/attributes.h>
 
-enum unitType{
+enum unitType {
 	ORANGE,
 	BLUE,
 	YELLOW,
 	PURPLE
+};
+
+class MeshesCreator {
+public:
+	static MeshesCreator& getInstance();
+	Mesh *getMesh(std::string name);
+	MeshesCreator(MeshesCreator &) = delete;
+	void operator=(MeshesCreator const&) = delete;
+private:
+	MeshesCreator();
+
+	std::unordered_map<std::string, Mesh*> meshes;
 };
 
 class HomeBase : public Drawable {
@@ -19,7 +31,7 @@ private:
 
 class Background : public Drawable {
 public:
-	Background(float logicSpaceWidth, float logicSpaceHeigth);
+	Background();
 	~Background();
 private:
 	glm::vec2 center;
@@ -33,10 +45,10 @@ private:
 	glm::vec2 center;
 };
 
-class RombPrice : public Drawable {
+class Price : public Drawable {
 public:
-	RombPrice(unitType type);
-	~RombPrice();
+	Price(unitType type);
+	~Price();
 private:
 	glm::vec2 squareCenter;
 	glm::vec2 firstStarCenter;
@@ -44,3 +56,18 @@ private:
 	int cost;
 };
 
+class Resource : public Drawable {
+public:
+	Resource(int index);
+	~Resource();
+private:
+	glm::vec2 firstStarCenter;
+};
+
+class Life : public Drawable {
+public:
+	Life(int index);
+	~Life();
+private:
+	glm::vec2 firstLifeCenter;
+};

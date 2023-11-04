@@ -33,8 +33,8 @@ void Homework1::Init() {
 
 	logicSpace.x = 0;       // logic x
 	logicSpace.y = 0;       // logic y
-	logicSpace.width = logicSpaceWidth;   // logic width
-	logicSpace.height = logicSpaceHeigth;  // logic height
+	logicSpace.width = 1800;   // logic width
+	logicSpace.height = 1000;  // logic height
 
 	CreatePermanentObjects();
 }
@@ -111,7 +111,7 @@ void Homework1::Update(float deltaTimeSeconds) {
 }
 
 void Homework1::DrawScene() {
-	drawBackground();
+	DrawBackground();
 	DrawUI();
 }
 
@@ -124,6 +124,15 @@ void m1::Homework1::DrawUI() {
 
 	for (int i = 0; i < 4; i++)
 		DrawObject(*rombPrices[i]);
+
+	for (int i = 0; i < gameState.numStars; ++i) {
+		DrawObject(*resources[i]);
+	}
+
+	for (int i = 0; i < gameState.numLives; ++i)
+	{
+		DrawObject(*lives[i]);
+	}
 }
 
 void Homework1::DrawObject(Drawable& object) {
@@ -180,20 +189,29 @@ void Homework1::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) 
 void Homework1::OnWindowResize(int width, int height) {}
 
 void m1::Homework1::CreatePermanentObjects() {
-	background = new Background(logicSpaceWidth, logicSpaceHeigth);
+	background = new Background();
 	homeBase = new HomeBase();
 
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			cells[i][j] = new Cell(i, j);
 
-	rombPrices[0] = new RombPrice(ORANGE);
-	rombPrices[1] = new RombPrice(BLUE);
-	rombPrices[2] = new RombPrice(YELLOW);
-	rombPrices[3] = new RombPrice(PURPLE);
+	rombPrices[0] = new Price(ORANGE);
+	rombPrices[1] = new Price(BLUE);
+	rombPrices[2] = new Price(YELLOW);
+	rombPrices[3] = new Price(PURPLE);
+
+	for (int i = 0; i < maxStars; ++i) {
+		resources[i] = new Resource(i);
+	}
+
+	for (int i = 0; i < maxLives; ++i)
+	{
+		lives[i] = new Life(i);
+	}
 }
 
-inline void Homework1::drawBackground() {
+inline void Homework1::DrawBackground() {
 	DrawObject(*background);
 }
 
