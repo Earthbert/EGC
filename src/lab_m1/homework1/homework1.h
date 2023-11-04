@@ -32,7 +32,6 @@ namespace m1
 		~Homework1() override;
 
 		void Init() override;
-		void RenderMesh(Mesh* mesh, const glm::mat3& modelMatrix);
 
 	private:
 		void FrameStart() override;
@@ -57,12 +56,11 @@ namespace m1
 
 
 		glm::mat3 VisualizationTransf2D() const;
-		glm::mat3 VisualizationTransf2DUnif() const;
 
 		void SetViewportArea(glm::vec3 colorColor = glm::vec3(0), bool clear = true) const;
 
 		inline void DrawBackground();
-
+		glm::vec2 calcLogicSpaceCoord(int x, int y);
 	private:
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
@@ -76,6 +74,8 @@ namespace m1
 			int numStars = maxStars;
 		} gameState;
 
+		bool dragingRomb = false;
+
 		// UI Elements
 		HomeBase* homeBase;
 		Background* background;
@@ -83,5 +83,7 @@ namespace m1
 		Price* rombPrices[4];
 		Resource* resources[maxStars];
 		Life* lives[maxLives];
+		DragRomb* dragRomb;
+
 	};
 }   // namespace m1

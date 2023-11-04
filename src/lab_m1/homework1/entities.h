@@ -12,8 +12,8 @@ enum unitType {
 class MeshesCreator {
 public:
 	static MeshesCreator& getInstance();
-	Mesh *getMesh(std::string name);
-	MeshesCreator(MeshesCreator &) = delete;
+	Mesh* getMesh(std::string name);
+	MeshesCreator(MeshesCreator&) = delete;
 	void operator=(MeshesCreator const&) = delete;
 private:
 	MeshesCreator();
@@ -37,18 +37,21 @@ private:
 	glm::vec2 center;
 };
 
-class Cell : public Drawable {
+class Cell : public Drawable, public Clickable {
 public:
 	Cell(int i, int j);
 	~Cell();
 private:
 	glm::vec2 center;
+
 };
 
-class Price : public Drawable {
+class Price : public Drawable, public Clickable {
 public:
 	Price(unitType type);
 	~Price();
+	const unitType& getUnitType();
+	const int& getCost();
 private:
 	glm::vec2 squareCenter;
 	glm::vec2 firstStarCenter;
@@ -70,4 +73,17 @@ public:
 	~Life();
 private:
 	glm::vec2 firstLifeCenter;
+};
+
+class DragRomb : public Drawable{
+public:
+	DragRomb();
+	~DragRomb();
+
+	void changeColor(unitType type);
+	void changePos(glm::vec2 pos);
+
+	const unitType& getUnitType() const;
+private:
+	unitType type;
 };

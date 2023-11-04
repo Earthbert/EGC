@@ -9,3 +9,11 @@ Drawable::~Drawable() = default;
 const std::vector<std::pair<Mesh*, glm::mat3>>& Drawable::getDrawData() {
 	return this->objectData;
 }
+
+bool Clickable::checkClick(glm::vec2 pos) const {
+	if (pos.x > pressBoxCenter.x + this->width || pos.x < pressBoxCenter.x - this->width)
+		return false;
+	if (pos.y > pressBoxCenter.y + this->heigth || pos.y < pressBoxCenter.y - this->heigth)
+		return false;
+	return true;
+}

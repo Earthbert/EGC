@@ -53,26 +53,6 @@ glm::mat3 Homework1::VisualizationTransf2D() const {
 		0.0f, 0.0f, 1.0f));
 }
 
-
-// Uniform 2D visualization matrix (same scale factor on x and y axes)
-glm::mat3 Homework1::VisualizationTransf2DUnif() const {
-	float sx, sy, tx, ty, smin;
-	sx = viewSpace.width / logicSpace.width;
-	sy = viewSpace.height / logicSpace.height;
-	if (sx < sy)
-		smin = sx;
-	else
-		smin = sy;
-	tx = viewSpace.x - smin * logicSpace.x + (viewSpace.width - smin * logicSpace.width) / 2;
-	ty = viewSpace.y - smin * logicSpace.y + (viewSpace.height - smin * logicSpace.height) / 2;
-
-	return glm::transpose(glm::mat3(
-		smin, 0.0f, tx,
-		0.0f, smin, ty,
-		0.0f, 0.0f, 1.0f));
-}
-
-
 void Homework1::SetViewportArea(glm::vec3 colorColor, bool clear) const {
 	glViewport(viewSpace.x, viewSpace.y, viewSpace.width, viewSpace.height);
 
@@ -129,10 +109,12 @@ void m1::Homework1::DrawUI() {
 		DrawObject(*resources[i]);
 	}
 
-	for (int i = 0; i < gameState.numLives; ++i)
-	{
+	for (int i = 0; i < gameState.numLives; ++i) {
 		DrawObject(*lives[i]);
 	}
+
+	if (dragingRomb)
+		DrawObject(*dragRomb);
 }
 
 void Homework1::DrawObject(Drawable& object) {
@@ -169,17 +151,38 @@ void Homework1::OnKeyRelease(int key, int mods) {
 
 
 void Homework1::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) {
+	glm::vec2 logicCoord = calcLogicSpaceCoord(mouseX, mouseY);
 	// Add mouse move event
+	if (window->MouseHold(GLFW_MOUSE_BUTTON_LEFT)) {
+		dragRomb->changePos(logicCoord);
+	}
 }
 
 
 void Homework1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
 	// Add mouse button press event
+	glm::vec2 logicCoord = calcLogicSpaceCoord(mouseX, mouseY);
+
+	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
+		for (Price* rombPrice : rombPrices) {
+			if (rombPrice->checkClick(logicCoord)) {
+				if (rombPrice->getCost() <= gameState.numStars) {
+					dragingRomb = true;
+					dragRomb->changeColor(rombPrice->getUnitType());
+					dragRomb->changePos(logicCoord);
+				}
+				break;
+			}
+		}
+	}
 }
 
 
 void Homework1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) {
 	// Add mouse button release event
+	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
+		dragingRomb = false;
+	}
 }
 
 
@@ -205,16 +208,24 @@ void m1::Homework1::CreatePermanentObjects() {
 		resources[i] = new Resource(i);
 	}
 
-	for (int i = 0; i < maxLives; ++i)
-	{
+	for (int i = 0; i < maxLives; ++i) {
 		lives[i] = new Life(i);
 	}
+
+	dragRomb = new DragRomb();
 }
 
 inline void Homework1::DrawBackground() {
 	DrawObject(*background);
 }
 
-void Homework1::RenderMesh(Mesh* mesh, const glm::mat3& modelMatrix) {
-	RenderMesh2D(mesh, shaders["VertexColor"], modelMatrix);
+glm::vec2 Homework1::calcLogicSpaceCoord(int x, int y) {
+	y = viewSpace.height - y;
+
+	glm::mat3 visMat = VisualizationTransf2D();
+	glm::mat3 invMat = glm::inverse(visMat);
+	glm::vec3 logicCoord = invMat * glm::vec3(x, y, 1);
+
+	return glm::vec2(logicCoord.x, logicCoord.y);
 }
+

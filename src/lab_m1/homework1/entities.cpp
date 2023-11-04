@@ -12,13 +12,13 @@ MeshesCreator::MeshesCreator() {
 	meshes["backGround"] = mesh;
 	mesh = hw_object2D::CreateSquare("cell", 150, glm::vec3(0, 1, 0.2), true, 0);
 	meshes["cell"] = mesh;
-	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 0);
+	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 1);
 	meshes["orangeRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 0);
+	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 1);
 	meshes["blueRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 0);
+	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 1);
 	meshes["yellowRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 0);
+	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 1);
 	meshes["purpleRomb"] = mesh;
 	mesh = hw_object2D::CreateSquare("priceSquare", 150, glm::vec3(0, 0, 0), false, 0);
 	meshes["priceSquare"] = mesh;
@@ -72,7 +72,11 @@ Cell::Cell(int i, int j) {
 		this->center.x = 675;
 	}
 
+	this->width = 75;
+	this->heigth = 75;
+
 	glm::mat3 modelMatrix = transform2D::Translate(this->center.x, this->center.y);
+	this->pressBoxCenter = glm::vec2(this->center.x, this->center.y);
 	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("cell"), modelMatrix);
 }
 
@@ -112,6 +116,10 @@ Price::Price(unitType type) {
 
 	this->firstStarCenter.y = 760;
 	this->squareCenter.y = 875;
+	this->pressBoxCenter = squareCenter;
+
+	this->width = 75;
+	this->heigth = 75;
 
 	objectData.emplace_back(MeshesCreator::getInstance().getMesh("priceSquare"), transform2D::Translate(this->squareCenter.x, this->squareCenter.y));
 
@@ -120,6 +128,14 @@ Price::Price(unitType type) {
 	}
 
 	objectData.emplace_back(romb, transform2D::Translate(this->squareCenter.x, this->squareCenter.y));
+}
+
+const unitType& Price::getUnitType() {
+	return this->type;
+}
+
+const int& Price::getCost() {
+	return this->cost;
 }
 
 Resource::Resource(int index) {
@@ -136,4 +152,36 @@ Life::Life(int index) {
 	objectData.emplace_back(MeshesCreator::getInstance().getMesh("lifeSquare"), transform2D::Translate(index * 120 + firstLifeCenter.x, firstLifeCenter.y));
 }
 
-Life::~Life() {}
+Life::~Life() = default;
+
+DragRomb::DragRomb() {
+	objectData.emplace_back(MeshesCreator::getInstance().getMesh("blueRomb"), transform2D::Translate(0, 0));
+}
+
+DragRomb::~DragRomb() = default;
+
+void DragRomb::changeColor(unitType type) {
+	this->type = type;
+	switch (type) {
+	case ORANGE:
+		this->objectData[0].first = MeshesCreator::getInstance().getMesh("orangeRomb");
+		break;
+	case BLUE:
+		this->objectData[0].first = MeshesCreator::getInstance().getMesh("blueRomb");
+		break;
+	case YELLOW:
+		this->objectData[0].first = MeshesCreator::getInstance().getMesh("yellowRomb");
+		break;
+	case PURPLE:
+		this->objectData[0].first = MeshesCreator::getInstance().getMesh("purpleRomb");
+		break;
+	}
+}
+
+void DragRomb::changePos(glm::vec2 pos) {
+	this->objectData[0].second = transform2D::Translate(pos.x, pos.y);
+}
+
+const unitType& DragRomb::getUnitType() const {
+	return this->type;
+}
