@@ -56,10 +56,10 @@ namespace m1
 		void DrawUI();
 
 
-		glm::mat3 VisualizationTransf2D();
-		glm::mat3 VisualizationTransf2DUnif();
+		glm::mat3 VisualizationTransf2D() const;
+		glm::mat3 VisualizationTransf2DUnif() const;
 
-		void SetViewportArea(glm::vec3 colorColor = glm::vec3(0), bool clear = true);
+		void SetViewportArea(glm::vec3 colorColor = glm::vec3(0), bool clear = true) const;
 
 		inline void drawBackground();
 
@@ -82,5 +82,7 @@ namespace m1
 		HomeBase* homeBase;
 		Background* background;
 		Cell* cells[3][3];
+		RombPrice* rombPrices[4];
+
 	};
 }   // namespace m1

@@ -18,10 +18,10 @@ using namespace m1;
  */
 
 
-Homework1::Homework1() {}
+Homework1::Homework1() = default;
 
 
-Homework1::~Homework1() {}
+Homework1::~Homework1() = default;
 
 
 void Homework1::Init() {
@@ -40,7 +40,7 @@ void Homework1::Init() {
 }
 
 // 2D visualization matrix
-glm::mat3 Homework1::VisualizationTransf2D() {
+glm::mat3 Homework1::VisualizationTransf2D() const {
 	float sx = viewSpace.width / logicSpace.width;
 	float sy = viewSpace.height / logicSpace.height;
 	float s = min(sx, sy);
@@ -55,7 +55,7 @@ glm::mat3 Homework1::VisualizationTransf2D() {
 
 
 // Uniform 2D visualization matrix (same scale factor on x and y axes)
-glm::mat3 Homework1::VisualizationTransf2DUnif() {
+glm::mat3 Homework1::VisualizationTransf2DUnif() const {
 	float sx, sy, tx, ty, smin;
 	sx = viewSpace.width / logicSpace.width;
 	sy = viewSpace.height / logicSpace.height;
@@ -73,7 +73,7 @@ glm::mat3 Homework1::VisualizationTransf2DUnif() {
 }
 
 
-void Homework1::SetViewportArea(glm::vec3 colorColor, bool clear) {
+void Homework1::SetViewportArea(glm::vec3 colorColor, bool clear) const {
 	glViewport(viewSpace.x, viewSpace.y, viewSpace.width, viewSpace.height);
 
 	glEnable(GL_SCISSOR_TEST);
@@ -117,9 +117,13 @@ void Homework1::DrawScene() {
 
 void m1::Homework1::DrawUI() {
 	DrawObject(*homeBase);
+
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			DrawObject(*cells[i][j]);
+
+	for (int i = 0; i < 4; i++)
+		DrawObject(*rombPrices[i]);
 }
 
 void Homework1::DrawObject(Drawable& object) {
@@ -182,6 +186,11 @@ void m1::Homework1::CreatePermanentObjects() {
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			cells[i][j] = new Cell(i, j);
+
+	rombPrices[0] = new RombPrice(ORANGE);
+	rombPrices[1] = new RombPrice(BLUE);
+	rombPrices[2] = new RombPrice(YELLOW);
+	rombPrices[3] = new RombPrice(PURPLE);
 }
 
 inline void Homework1::drawBackground() {

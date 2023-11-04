@@ -17,8 +17,8 @@ namespace hw_object2D
 
 	Mesh* CreateRectangle(
 		const std::string& name,
-		float length,
 		float width,
+		float heigth,
 		glm::vec3 color,
 		bool fill, float depth = 0);
 

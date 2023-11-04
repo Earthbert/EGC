@@ -2,9 +2,10 @@
 
 #include <lab_m1/homework1/attributes.h>
 
-enum starType {
+enum unitType{
 	ORANGE,
 	BLUE,
+	YELLOW,
 	PURPLE
 };
 
@@ -13,6 +14,7 @@ public:
 	HomeBase();
 	~HomeBase();
 private:
+	glm::vec2 center;
 };
 
 class Background : public Drawable {
@@ -20,6 +22,7 @@ public:
 	Background(float logicSpaceWidth, float logicSpaceHeigth);
 	~Background();
 private:
+	glm::vec2 center;
 };
 
 class Cell : public Drawable {
@@ -27,11 +30,17 @@ public:
 	Cell(int i, int j);
 	~Cell();
 private:
-	static glm::vec2 calcCenter(int i, int j);
+	glm::vec2 center;
 };
 
-class my_class {
+class RombPrice : public Drawable {
 public:
-
+	RombPrice(unitType type);
+	~RombPrice();
+private:
+	glm::vec2 squareCenter;
+	glm::vec2 firstStarCenter;
+	unitType type;
+	int cost;
 };
 
