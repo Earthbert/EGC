@@ -2,8 +2,7 @@
 
 #include "components/simple_scene.h"
 
-class Drawable
-{
+class Drawable {
 public:
 	Drawable(glm::vec2 initialPos);
 	~Drawable();

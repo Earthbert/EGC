@@ -2,28 +2,36 @@
 
 #include <lab_m1/homework1/attributes.h>
 
-class HomeBase : public Drawable
-{
+enum starType {
+	ORANGE,
+	BLUE,
+	PURPLE
+};
+
+class HomeBase : public Drawable {
 public:
 	HomeBase();
 	~HomeBase();
 private:
 };
 
-class Background : public Drawable
-{
+class Background : public Drawable {
 public:
-	Background(int logicSpaceWidth, int logicSpaceHeigth);
+	Background(float logicSpaceWidth, float logicSpaceHeigth);
 	~Background();
 private:
 };
 
-class Cell : public Drawable
-{
+class Cell : public Drawable {
 public:
 	Cell(int i, int j);
 	~Cell();
 private:
-	glm::vec2 calcCenter(int i, int j);
+	static glm::vec2 calcCenter(int i, int j);
+};
+
+class my_class {
+public:
+
 };
 

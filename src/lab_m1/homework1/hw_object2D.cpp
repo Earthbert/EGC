@@ -11,8 +11,7 @@ Mesh* hw_object2D::CreateSquare(
 	const std::string& name,
 	float length,
 	glm::vec3 color,
-	bool fill, float depth)
-{
+	bool fill, float depth) {
 	float lengthH = length / 2.0f;
 	std::vector<VertexFormat> vertices =
 	{
@@ -27,8 +26,7 @@ Mesh* hw_object2D::CreateSquare(
 
 	if (!fill) {
 		square->SetDrawMode(GL_LINE_LOOP);
-	}
-	else {
+	} else {
 		// Draw 2 triangles. Add the remaining 2 indices
 		indices.push_back(0);
 		indices.push_back(2);
@@ -43,8 +41,7 @@ Mesh* hw_object2D::CreateRectangle(
 	float width,
 	float heigth,
 	glm::vec3 color,
-	bool fill, float depth)
-{
+	bool fill, float depth) {
 	float widthH = width / 2.0f;
 	float heigthH = heigth / 2.0f;
 
@@ -61,8 +58,7 @@ Mesh* hw_object2D::CreateRectangle(
 
 	if (!fill) {
 		square->SetDrawMode(GL_LINE_LOOP);
-	}
-	else {
+	} else {
 		// Draw 2 triangles. Add the remaining 2 indices
 		indices.push_back(0);
 		indices.push_back(2);
@@ -76,13 +72,11 @@ Mesh* hw_object2D::CreateHexagon(
 	const std::string& name,
 	float radius,
 	glm::vec3 color,
-	bool fill, float depth)
-{
+	bool fill, float depth) {
 	std::vector<VertexFormat> vertices;
 	std::vector<unsigned int> indices;
 
-	for (unsigned int i = 0; i < 6.0f; i++)
-	{
+	for (unsigned int i = 0; i < 6.0f; i++) {
 		float theta = 2.0f * M_PI * float(i) / 6.0f + M_PI / 4;
 
 		float x = radius * cosf(theta);
@@ -96,8 +90,7 @@ Mesh* hw_object2D::CreateHexagon(
 
 	if (!fill) {
 		hexagon->SetDrawMode(GL_LINE_LOOP);
-	}
-	else {
+	} else {
 		vertices.push_back(VertexFormat(glm::vec3(0, 0, depth), color));
 		indices.insert(indices.begin(), 6);
 		indices.push_back(0);
@@ -113,13 +106,11 @@ Mesh* hw_object2D::CreateStar(
 	float radius,
 	float innerRadius,
 	glm::vec3 color,
-	bool fill, float depth)
-{
+	bool fill, float depth) {
 	std::vector<VertexFormat> vertices;
 	std::vector<unsigned int> indices;
 
-	for (unsigned int i = 0; i < 5.0f; i++)
-	{
+	for (unsigned int i = 0; i < 5.0f; i++) {
 		float theta = 2.0f * M_PI * float(i) / 5.0f + M_PI / 2.0;
 		float innerTheta = 2.0f * M_PI * float(i) / 5.0f + M_PI / 2.0 + M_PI / 5.0f;
 
@@ -140,8 +131,7 @@ Mesh* hw_object2D::CreateStar(
 
 	if (!fill) {
 		star->SetDrawMode(GL_LINE_LOOP);
-	}
-	else {
+	} else {
 		vertices.push_back(VertexFormat(glm::vec3(0, 0, depth), color));
 		indices.insert(indices.begin(), 10);
 		indices.push_back(0);
@@ -156,8 +146,7 @@ Mesh* hw_object2D::CreateRomb(
 	const std::string& name,
 	float radius,
 	glm::vec3 color,
-	float depth)
-{
+	float depth) {
 	std::vector<VertexFormat> vertices =
 	{
 		VertexFormat(glm::vec3(0, radius, depth), color),
@@ -172,7 +161,7 @@ Mesh* hw_object2D::CreateRomb(
 	};
 
 	Mesh* romb = new Mesh(name);
-	std::vector<unsigned int> indices = { 0, 1, 3, 1, 2, 3, 4, 5, 7, 4, 6, 7};
+	std::vector<unsigned int> indices = { 0, 1, 3, 1, 2, 3, 4, 5, 7, 4, 6, 7 };
 
 	romb->SetDrawMode(GL_TRIANGLES);
 

@@ -5,11 +5,9 @@
 
 namespace m1
 {
-	class Homework1 : public gfxc::SimpleScene
-	{
+	class Homework1 : public gfxc::SimpleScene {
 	public:
-		struct ViewportSpace
-		{
+		struct ViewportSpace {
 			ViewportSpace() : x(0), y(0), width(1), height(1) {}
 			ViewportSpace(int x, int y, int width, int height)
 				: x(x), y(y), width(width), height(height) {}
@@ -19,8 +17,7 @@ namespace m1
 			int height;
 		};
 
-		struct LogicSpace
-		{
+		struct LogicSpace {
 			LogicSpace() : x(0), y(0), width(1), height(1) {}
 			LogicSpace(float x, float y, float width, float height)
 				: x(x), y(y), width(width), height(height) {}
@@ -32,7 +29,7 @@ namespace m1
 
 	public:
 		Homework1();
-		~Homework1();
+		~Homework1() override;
 
 		void Init() override;
 		void RenderMesh(Mesh* mesh, const glm::mat3& modelMatrix);
@@ -59,10 +56,10 @@ namespace m1
 		void DrawUI();
 
 
-		glm::mat3 VisualizationTransf2D(const LogicSpace& logicSpace, const ViewportSpace& viewSpace);
-		glm::mat3 VisualizationTransf2DUnif(const LogicSpace& logicSpace, const ViewportSpace& viewSpace);
+		glm::mat3 VisualizationTransf2D();
+		glm::mat3 VisualizationTransf2DUnif();
 
-		void SetViewportArea(const ViewportSpace& viewSpace, glm::vec3 colorColor = glm::vec3(0), bool clear = true);
+		void SetViewportArea(glm::vec3 colorColor = glm::vec3(0), bool clear = true);
 
 		inline void drawBackground();
 
@@ -74,8 +71,7 @@ namespace m1
 		const float logicSpaceWidth = 1800;
 		const float logicSpaceHeigth = 1000;
 
-		struct GameState
-		{
+		struct GameState {
 			const int maxLives = 3;
 			const int maxStars = 10;
 
@@ -83,8 +79,8 @@ namespace m1
 			int numStars = 0;
 		} gameState;
 
-		HomeBase *homeBase;
-		Background *background;
-		Cell *cells[3][3];
+		HomeBase* homeBase;
+		Background* background;
+		Cell* cells[3][3];
 	};
 }   // namespace m1

@@ -4,59 +4,45 @@
 
 using namespace std;
 
-HomeBase::HomeBase() : Drawable(glm::vec2(75, 350))
-{
+HomeBase::HomeBase() : Drawable(glm::vec2(75, 350)) {
 	Mesh* mesh = hw_object2D::CreateRectangle("homeBase", 100, 600, glm::vec3(1, 0, 0), true, 0);
 	glm::mat3 modelMatrix = transform2D::Translate(this->initialPos.x, this->initialPos.y);
-	this->objectData.push_back(make_pair(mesh, modelMatrix));
+	this->objectData.emplace_back(mesh, modelMatrix);
 };
 
-HomeBase::~HomeBase()
-{
-}
+HomeBase::~HomeBase() = default;
 
-Background::Background(int logicSpaceWidth, int logicSpaceHeigth) : Drawable(glm::vec2(logicSpaceWidth / 2, logicSpaceHeigth / 2))
-{
+Background::Background(float logicSpaceWidth, float logicSpaceHeigth) : Drawable(glm::vec2(logicSpaceWidth / 2, logicSpaceHeigth / 2)) {
 	Mesh* mesh = hw_object2D::CreateRectangle("backGround", logicSpaceWidth, logicSpaceHeigth, glm::vec3(0.2, 0.2, 0.2), true, -1);
 	glm::mat3 modelMatrix = transform2D::Translate(this->initialPos.x, this->initialPos.y);
-	this->objectData.push_back(make_pair(mesh, modelMatrix));
+	this->objectData.emplace_back(mesh, modelMatrix);
 }
 
-Background::~Background()
-{
-}
+Background::~Background() = default;
 
-Cell::Cell(int i, int j) : Drawable(calcCenter(i, j))
-{
+Cell::Cell(int i, int j) : Drawable(calcCenter(i, j)) {
 	Mesh* mesh = hw_object2D::CreateSquare("Cell", 150, glm::vec3(0, 1, 0.2), true, 0);
 	glm::mat3 modelMatrix = transform2D::Translate(this->initialPos.x, this->initialPos.y);
-	this->objectData.push_back(make_pair(mesh, modelMatrix));
+	this->objectData.emplace_back(mesh, modelMatrix);
 }
 
-Cell::~Cell()
-{
-}
+Cell::~Cell() = default;
 
-glm::vec2 Cell::calcCenter(int i, int j)
-{
-	glm::vec2 pos;
+glm::vec2 Cell::calcCenter(int i, int j) {
+	glm::vec2 pos = { 0,0 };
 	if (i == 0) {
 		pos.y = 575;
-	}
-	else if (i == 1) {
+	} else if (i == 1) {
 		pos.y = 350;
-	}
-	else if (i == 2) {
+	} else if (i == 2) {
 		pos.y = 125;
 	}
 
 	if (j == 0) {
 		pos.x = 225;
-	}
-	else if (j == 1) {
+	} else if (j == 1) {
 		pos.x = 450;
-	}
-	else if (j == 2) {
+	} else if (j == 2) {
 		pos.x = 675;
 	}
 	return pos;
