@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lab_m1/homework1/attributes.h>
+#include <optional>
 
 enum unitType {
 	ORANGE,
@@ -41,17 +42,20 @@ class Cell : public Drawable, public Clickable {
 public:
 	Cell(int i, int j);
 	~Cell();
+	const glm::vec2& getCenter() const;
+	bool occupy(unitType type);
+	void free();
 private:
 	glm::vec2 center;
-
+	std::optional<unitType> type = {};
 };
 
 class Price : public Drawable, public Clickable {
 public:
 	Price(unitType type);
 	~Price();
-	const unitType& getUnitType();
-	const int& getCost();
+	const unitType& getUnitType() const;
+	const int& getCost() const;
 private:
 	glm::vec2 squareCenter;
 	glm::vec2 firstStarCenter;
@@ -75,7 +79,7 @@ private:
 	glm::vec2 firstLifeCenter;
 };
 
-class DragRomb : public Drawable{
+class DragRomb : public Drawable {
 public:
 	DragRomb();
 	~DragRomb();
@@ -84,6 +88,17 @@ public:
 	void changePos(glm::vec2 pos);
 
 	const unitType& getUnitType() const;
+	const int& getCost() const;
 private:
 	unitType type;
+	int cost;
+};
+
+class Collectable : public Drawable, public Clickable {
+public:
+	Collectable(glm::vec2 center);
+	~Collectable();
+	const int& getStars() const;
+private:
+	int stars;
 };

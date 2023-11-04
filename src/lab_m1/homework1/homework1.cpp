@@ -18,7 +18,7 @@ using namespace m1;
  */
 
 
-Homework1::Homework1() = default;
+Homework1::Homework1() : uniX(40, 1760), uniY(40, 960), uniThree(0, 2) {};
 
 
 Homework1::~Homework1() = default;
@@ -35,6 +35,9 @@ void Homework1::Init() {
 	logicSpace.y = 0;       // logic y
 	logicSpace.width = 1800;   // logic width
 	logicSpace.height = 1000;  // logic height
+
+	std::random_device rd;
+	rng.seed(rd());
 
 	CreatePermanentObjects();
 }
@@ -77,6 +80,8 @@ void Homework1::FrameStart() {
 
 
 void Homework1::Update(float deltaTimeSeconds) {
+	float deltaTime = deltaTimeSeconds * 1000;
+
 	const glm::ivec2 resolution = window->GetResolution();
 
 	// Sets the screen area where to draw - the left half of the window
@@ -87,12 +92,26 @@ void Homework1::Update(float deltaTimeSeconds) {
 	visMatrix = glm::mat3(1);
 	visMatrix *= VisualizationTransf2D();
 
+	CreateRandomEntities(deltaTime);
+
 	DrawScene();
+}
+
+void Homework1::CreateRandomEntities(float deltaTime) {
+	// Collectables
+	collectableTimer += deltaTime;
+	if (collectableTimer >= collectableDelta) {
+		int x = uniX(rng);
+		int y = uniY(rng);
+		collectables.emplace_back(new Collectable(glm::vec2(x, y)));
+		collectableTimer = 0;
+	}
 }
 
 void Homework1::DrawScene() {
 	DrawBackground();
 	DrawUI();
+	DrawLiveElements();
 }
 
 void m1::Homework1::DrawUI() {
@@ -115,6 +134,12 @@ void m1::Homework1::DrawUI() {
 
 	if (dragingRomb)
 		DrawObject(*dragRomb);
+}
+
+void Homework1::DrawLiveElements() {
+	for (Collectable* collectable : collectables) {
+		DrawObject(*collectable);
+	}
 }
 
 void Homework1::DrawObject(Drawable& object) {
@@ -174,13 +199,40 @@ void Homework1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
 				break;
 			}
 		}
+
+		for (auto iter = collectables.begin(); iter != collectables.end(); iter++) {
+			if ((*iter)->checkClick(logicCoord)) {
+				gameState.numStars = min(gameState.numStars + (*iter)->getStars(), maxStars);
+				collectables.erase(iter);
+				break;
+			}
+		}
+	}
+
+	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_RIGHT)) {
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++) {
+				if (cells[i][j]->checkClick(logicCoord)) {
+					cells[i][j]->free();
+				}
+			}
 	}
 }
 
 
 void Homework1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) {
 	// Add mouse button release event
+	glm::vec2 logicCoord = calcLogicSpaceCoord(mouseX, mouseY);
+
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++) {
+				if (cells[i][j]->checkClick(logicCoord)) {
+					if (dragingRomb && cells[i][j]->occupy(dragRomb->getUnitType()))
+						gameState.numStars -= dragRomb->getCost();
+					break;
+				}
+			}
 		dragingRomb = false;
 	}
 }

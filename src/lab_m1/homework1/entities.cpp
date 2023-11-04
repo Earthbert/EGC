@@ -12,13 +12,13 @@ MeshesCreator::MeshesCreator() {
 	meshes["backGround"] = mesh;
 	mesh = hw_object2D::CreateSquare("cell", 150, glm::vec3(0, 1, 0.2), true, 0);
 	meshes["cell"] = mesh;
-	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 1);
+	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 2);
 	meshes["orangeRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 1);
+	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 2);
 	meshes["blueRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 1);
+	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 2);
 	meshes["yellowRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 1);
+	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 2);
 	meshes["purpleRomb"] = mesh;
 	mesh = hw_object2D::CreateSquare("priceSquare", 150, glm::vec3(0, 0, 0), false, 0);
 	meshes["priceSquare"] = mesh;
@@ -28,6 +28,8 @@ MeshesCreator::MeshesCreator() {
 	meshes["resourceStar"] = mesh;
 	mesh = hw_object2D::CreateSquare("lifeSquare", 100, glm::vec3(1, 0, 0), true, 0);
 	meshes["lifeSquare"] = mesh;
+	mesh = hw_object2D::CreateStar("collectableStar", 60, 20, glm::vec3(0.9, 0.25, 0.95), true, 1);
+	meshes["collectableStar"] = mesh;
 }
 
 MeshesCreator& MeshesCreator::getInstance() {
@@ -82,6 +84,38 @@ Cell::Cell(int i, int j) {
 
 Cell::~Cell() = default;
 
+const glm::vec2& Cell::getCenter() const {
+	return center;
+}
+
+bool Cell::occupy(unitType type) {
+	if (this->type.has_value())
+		return false;
+	switch (type) {
+	case ORANGE:
+		this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("orangeRomb"), transform2D::Translate(center.x, center.y));
+		break;
+	case BLUE:
+		this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("blueRomb"), transform2D::Translate(center.x, center.y));
+		break;
+	case YELLOW:
+		this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("yellowRomb"), transform2D::Translate(center.x, center.y));
+		break;
+	case PURPLE:
+		this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("purpleRomb"), transform2D::Translate(center.x, center.y));
+		break;
+	}
+	this->type = type;
+	return true;
+}
+
+void Cell::free() {
+	if (!this->type.has_value())
+		return;
+	this->type = {};
+	objectData.pop_back();
+}
+
 Price::Price(unitType type) {
 	this->type = type;
 
@@ -130,11 +164,11 @@ Price::Price(unitType type) {
 	objectData.emplace_back(romb, transform2D::Translate(this->squareCenter.x, this->squareCenter.y));
 }
 
-const unitType& Price::getUnitType() {
+const unitType& Price::getUnitType() const {
 	return this->type;
 }
 
-const int& Price::getCost() {
+const int& Price::getCost() const {
 	return this->cost;
 }
 
@@ -165,15 +199,19 @@ void DragRomb::changeColor(unitType type) {
 	switch (type) {
 	case ORANGE:
 		this->objectData[0].first = MeshesCreator::getInstance().getMesh("orangeRomb");
+		cost = 1;
 		break;
 	case BLUE:
 		this->objectData[0].first = MeshesCreator::getInstance().getMesh("blueRomb");
+		cost = 2;
 		break;
 	case YELLOW:
 		this->objectData[0].first = MeshesCreator::getInstance().getMesh("yellowRomb");
+		cost = 2;
 		break;
 	case PURPLE:
 		this->objectData[0].first = MeshesCreator::getInstance().getMesh("purpleRomb");
+		cost = 3;
 		break;
 	}
 }
@@ -184,4 +222,22 @@ void DragRomb::changePos(glm::vec2 pos) {
 
 const unitType& DragRomb::getUnitType() const {
 	return this->type;
+}
+
+const int& DragRomb::getCost() const {
+	return this->cost;
+}
+
+Collectable::Collectable(glm::vec2 center) {
+	this->stars = 1;
+	this->pressBoxCenter = center;
+	this->heigth = 40;
+	this->width = 40;
+	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("collectableStar"), transform2D::Translate(center.x, center.y));
+}
+
+Collectable::~Collectable() = default;
+
+const int& Collectable::getStars() const {
+	return this->stars;
 }

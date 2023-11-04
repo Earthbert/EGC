@@ -1,5 +1,7 @@
 #pragma once
 
+#include <random>
+
 #include "components/simple_scene.h"
 #include "lab_m1/homework1/entities.h"
 
@@ -53,6 +55,8 @@ namespace m1
 
 		void DrawScene();
 		inline void DrawUI();
+		inline void DrawLiveElements();
+		inline void CreateRandomEntities(float deltaTime);
 
 
 		glm::mat3 VisualizationTransf2D() const;
@@ -61,7 +65,12 @@ namespace m1
 
 		inline void DrawBackground();
 		glm::vec2 calcLogicSpaceCoord(int x, int y);
-	private:
+
+		std::mt19937 rng;
+		std::uniform_int_distribution<int> uniX;
+		std::uniform_int_distribution<int> uniY;
+		std::uniform_int_distribution<int> uniThree;
+
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
 		glm::mat3 modelMatrix, visMatrix;
@@ -69,9 +78,10 @@ namespace m1
 		static constexpr int maxLives = 3;
 		static constexpr int maxStars = 12;
 
+		// Game State
 		struct GameState {
 			int numLives = maxLives;
-			int numStars = maxStars;
+			int numStars = maxStars / 2;
 		} gameState;
 
 		bool dragingRomb = false;
@@ -84,6 +94,11 @@ namespace m1
 		Resource* resources[maxStars];
 		Life* lives[maxLives];
 		DragRomb* dragRomb;
+
+		// Live Elements
+		const float collectableDelta = 2000;
+		float collectableTimer = 0;
+		std::vector<Collectable*> collectables;
 
 	};
 }   // namespace m1
