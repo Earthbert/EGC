@@ -37,8 +37,3 @@ protected:
 	glm::vec2 speed;
 };
 
-class HasAnimation {
-public:
-	virtual void startAnimation();
-	virtual bool animate();
-};

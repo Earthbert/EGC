@@ -38,6 +38,7 @@ namespace m1
 	private:
 		void FrameStart() override;
 		void CheckCollisions();
+		void UpdateAnimations(float deltaTime);
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
 
@@ -111,5 +112,9 @@ namespace m1
 
 		// Projectiles
 		std::vector<Projectile> projectiles;
+
+		// Animations
+		std::vector<Enemy> dyingEnemies;
+		bool cellAnimation[3][3];
 	};
 }   // namespace m1

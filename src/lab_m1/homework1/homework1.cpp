@@ -90,11 +90,26 @@ check_again:
 	for (auto iterP = projectiles.begin(); iterP != projectiles.end(); ++iterP)
 		for (auto iterE = enemies.begin(); iterE != enemies.end(); ++iterE)
 			if (iterP->checkCollision(*iterE)) {
-				if (iterE->getHit(iterP->getDamage()))
+				if (iterE->getHit(iterP->getDamage())) {
+					dyingEnemies.emplace_back(*iterE);
 					enemies.erase(iterE);
+				}
 				projectiles.erase(iterP);
 				goto check_again;
 			}
+}
+
+void Homework1::UpdateAnimations(float deltaTime) {
+	for (auto iterE = dyingEnemies.begin(); iterE != dyingEnemies.end();) {
+		if (iterE->update(deltaTime))
+			iterE = dyingEnemies.erase(iterE);
+		else
+			++iterE;
+	}
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			cells[i][j]->update(deltaTime);
 }
 
 
@@ -114,6 +129,8 @@ void Homework1::Update(float deltaTimeSeconds) {
 	MoveObjects(deltaTimeSeconds);
 
 	CheckCollisions();
+
+	UpdateAnimations(deltaTimeSeconds);
 
 	DrawScene();
 }
@@ -188,6 +205,10 @@ void Homework1::DrawLiveElements() {
 
 	for (Projectile& projectile : projectiles) {
 		DrawObject(projectile);
+	}
+
+	for (Enemy& enemy : dyingEnemies) {
+		DrawObject(enemy);
 	}
 }
 

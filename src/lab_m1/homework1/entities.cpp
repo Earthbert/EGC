@@ -119,7 +119,7 @@ const glm::vec2& Cell::getCenter() const {
 }
 
 bool Cell::occupy(unitType type) {
-	if (this->type.has_value())
+	if (this->type.has_value() || animation)
 		return false;
 	timer = shotDelta;
 	switch (type) {
@@ -143,12 +143,11 @@ bool Cell::occupy(unitType type) {
 void Cell::free() {
 	if (!this->type.has_value())
 		return;
-	this->type = {};
-	objectData.pop_back();
+	animation = true;
 }
 
 std::optional<unitType> Cell::shoot(Enemy enemy, float deltaTime) {
-	if (this->type.has_value() && enemy.getLine() == this->line && enemy.getType() == this->type) {
+	if (animation == false && this->type.has_value() && enemy.getLine() == this->line && enemy.getType() == this->type) {
 		timer += deltaTime;
 		if (timer >= this->shotDelta) {
 			timer = 0;
@@ -160,6 +159,22 @@ std::optional<unitType> Cell::shoot(Enemy enemy, float deltaTime) {
 
 bool Cell::validCollision(Enemy& enemy) const {
 	return type.has_value() && this->checkCollision(enemy);
+}
+
+void Cell::update(float deltaTime) {
+	if (animation) {
+		scale -= deltaTime;
+		glm::mat3 modelMat = transform2D::Translate(center.x, center.y);
+		modelMat *= transform2D::Scale(scale, scale);
+		objectData[1].second = modelMat;
+
+		if (scale < 0) {
+			this->type = {};
+			this->objectData.pop_back();
+			animation = false;
+			scale = 1;
+		}
+	}
 }
 
 Price::Price(unitType type) {
@@ -322,7 +337,7 @@ Enemy::Enemy(unitType type, int lineIndex) {
 	this->hitBoxRadius = 60;
 	this->type = type;
 	this->line = lineIndex;
-	this->speed = glm::vec2(-180, 0);
+	this->speed = glm::vec2(-100, 0);
 	this->lives = 3;
 	this->finalPos = glm::vec2(100, y);
 
@@ -353,8 +368,10 @@ bool Enemy::getHit(int damage) {
 		break;
 	}
 
-	if (this->lives <= 0)
+	if (this->lives <= 0) {
+		animation = true;
 		return true;
+	}
 	return  false;
 }
 
@@ -364,6 +381,20 @@ const int& Enemy::getLine() const {
 
 const unitType& Enemy::getType() const {
 	return this->type;
+}
+
+bool Enemy::update(float deltaTime) {
+	if (animation) {
+		scale -= deltaTime;
+		glm::mat3 modelMat = transform2D::Translate(currentPos.x, currentPos.y);
+		modelMat *= transform2D::Scale(scale, scale);
+		objectData[0].second = modelMat;
+		objectData[1].second = modelMat;
+
+		if (scale < 0)
+			return true;
+	}
+	return false;
 }
 
 Projectile::Projectile(unitType type, glm::vec2 pos) {

@@ -46,7 +46,12 @@ public:
 	bool getHit(int damage);
 	const int& getLine() const;
 	const unitType& getType() const;
+
+	bool update(float deltaTime);
 private:
+	float scale = 1;
+	bool animation = false;
+
 	int lives;
 	unitType type;
 	int line;
@@ -63,7 +68,11 @@ public:
 	std::optional<unitType> shoot(Enemy enemy, float deltaTime);
 	bool validCollision(Enemy& enemy) const;
 
+	void update(float deltaTime);
 private:
+	float scale = 1;
+	bool animation = false;
+
 	glm::vec2 center;
 	float shotDelta;
 	float timer = shotDelta;
