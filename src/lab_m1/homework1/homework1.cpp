@@ -92,14 +92,15 @@ void Homework1::Update(float deltaTimeSeconds) {
 
 	CreateRandomEntities(deltaTimeSeconds);
 
-	moveObjects(deltaTimeSeconds);
+	MoveObjects(deltaTimeSeconds);
 
 	DrawScene();
 }
 
 void Homework1::CreateRandomEntities(float deltaTime) {
 	// Collectables
-	collectableTimer += deltaTime * 500;
+	const float timeFactor = 500;
+	collectableTimer += deltaTime * timeFactor;
 	if (collectableTimer >= collectableDelta) {
 		for (int i = 0; i < 3; i++)
 			collectables.emplace_back(Collectable(glm::vec2(uniX(rng), uniY(rng))));
@@ -108,11 +109,23 @@ void Homework1::CreateRandomEntities(float deltaTime) {
 	}
 
 	// Enemies
-	enemyTimer += deltaTime * 500;
+	enemyTimer += deltaTime * timeFactor;
 	if (enemyTimer >= enemyDelta) {
-		enemies.emplace_back(Enemy(uniThree(rng), static_cast<unitType>(uniUnit(rng))));
+		enemies.emplace_back(Enemy(static_cast<unitType>(uniUnit(rng)), uniThree(rng)));
 		enemyTimer = 0;
 		enemyDelta += 4000 + uniTime(rng);
+	}
+
+	// Shooters
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			for (Enemy& enemy : enemies) {
+				auto projectileType = cells[i][j]->shoot(enemy, deltaTime * timeFactor);
+				if (projectileType.has_value()) {
+					projectiles.emplace_back(Projectile(projectileType.value(), cells[i][j]->getCenter()));
+				}
+			}
+		}
 	}
 }
 
@@ -145,12 +158,16 @@ void m1::Homework1::DrawUI() {
 }
 
 void Homework1::DrawLiveElements() {
-	for (Collectable &collectable : collectables) {
+	for (Collectable& collectable : collectables) {
 		DrawObject(collectable);
 	}
 
-	for (Enemy &enemy : enemies) {
+	for (Enemy& enemy : enemies) {
 		DrawObject(enemy);
+	}
+
+	for (Projectile& projectile : projectiles) {
+		DrawObject(projectile);
 	}
 }
 
@@ -279,9 +296,20 @@ void m1::Homework1::CreatePermanentObjects() {
 	dragRomb = new DragRomb();
 }
 
-void Homework1::moveObjects(float deltaTime) {
-	for (Enemy &enemy : enemies) {
-		enemy.move(deltaTime);
+void Homework1::MoveObjects(float deltaTime) {
+	for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
+		if (iter->move(deltaTime)) {
+			gameState.numLives--;
+			enemies.erase(iter);
+			break;
+		}
+	}
+
+	for (auto iter = projectiles.begin(); iter != projectiles.end(); ++iter) {
+		if (iter->move(deltaTime)) {
+			projectiles.erase(iter);
+			break;
+		}
 	}
 }
 

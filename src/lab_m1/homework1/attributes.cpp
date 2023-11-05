@@ -18,7 +18,7 @@ bool Clickable::checkClick(glm::vec2 pos) const {
 	return true;
 }
 
-bool HasHitbox::checkCollision(HasHitbox other) const {
+bool HasHitbox::checkCollision(HasHitbox& other) const {
 	float deltaX = this->hitboxCenter.x - other.hitboxCenter.x;
 	float deltaY = this->hitboxCenter.y - other.hitboxCenter.y;
 	float dist = sqrt(deltaX * deltaX + deltaY * deltaY);

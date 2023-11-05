@@ -38,15 +38,34 @@ private:
 	glm::vec2 center;
 };
 
-class Cell : public Drawable, public Clickable {
+class Enemy : public Drawable, public HasHitbox, public Moveable {
+public:
+	Enemy(unitType type, int lineIndex);
+
+	bool move(float deltaTime) override;
+	bool getHit(int damage);
+	const int& getLine() const;
+	const unitType& getType() const;
+private:
+	int lives;
+	unitType type;
+	int line;
+};
+
+
+class Cell : public Drawable, public Clickable, public HasHitbox {
 public:
 	Cell(int i, int j);
 	~Cell();
 	const glm::vec2& getCenter() const;
 	bool occupy(unitType type);
 	void free();
+	std::optional<unitType> shoot(Enemy enemy, float deltaTime);
 private:
 	glm::vec2 center;
+	float shotDelta;
+	float timer = shotDelta;
+	int line;
 	std::optional<unitType> type = {};
 };
 
@@ -97,22 +116,19 @@ private:
 class Collectable : public Drawable, public Clickable {
 public:
 	Collectable(glm::vec2 center);
-	~Collectable();
+	~Collectable() override;
 	const int& getStars() const;
 private:
 	int stars;
 };
 
-class Enemy : public Drawable, public HasHitbox, public Moveable {
+class Projectile : public Drawable, public HasHitbox, public Moveable {
 public:
-	Enemy(int lineIndex, unitType type);
-
+	Projectile(unitType type, glm::vec2 pos);
 	bool move(float deltaTime) override;
-	bool getHit(int damage);
-	const int& getLine() const;
-	const unitType& getType() const;
+	bool checkCollisionAndType(Enemy& other) const;
 private:
-	int lives;
 	unitType type;
-	int line;
+	float angularSpeed;
+	float angularStep;
 };

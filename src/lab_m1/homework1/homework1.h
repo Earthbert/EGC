@@ -50,7 +50,7 @@ namespace m1
 		void OnWindowResize(int width, int height) override;
 
 		void CreatePermanentObjects();
-		void moveObjects(float deltaTime);
+		void MoveObjects(float deltaTime);
 
 		void DrawObject(Drawable& object);
 		void DrawScene();
@@ -108,6 +108,7 @@ namespace m1
 		float enemyTimer = 0;
 		std::vector<Enemy> enemies;
 
-
+		// Projectiles
+		std::vector<Projectile> projectiles;
 	};
 }   // namespace m1

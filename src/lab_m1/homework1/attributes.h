@@ -22,7 +22,7 @@ public:
 
 class HasHitbox {
 public:
-	bool checkCollision(HasHitbox other) const;
+	bool checkCollision(HasHitbox& other) const;
 protected:
 	glm::vec2 hitboxCenter;
 	int hitBoxRadius;

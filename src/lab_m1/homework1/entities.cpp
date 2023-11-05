@@ -44,6 +44,15 @@ MeshesCreator::MeshesCreator() {
 	meshes["halfHPHex"] = mesh;
 	mesh = hw_object2D::CreateHexagon("lowHPHex", 45, glm::vec3(0.97, 0.18, 0), true, 2);
 	meshes["lowHPHex"] = mesh;
+	mesh = hw_object2D::CreateStar("orangeStar", 45, 15, glm::vec3(1, 0.5, 0.15), true, 1);
+	meshes["orangeStar"] = mesh;
+	mesh = hw_object2D::CreateStar("blueStar", 45, 15, glm::vec3(0.2, 0.5, 0.95), true, 1);
+	meshes["blueStar"] = mesh;
+	mesh = hw_object2D::CreateStar("yellowStar", 45, 15, glm::vec3(1, 1, 0.35), true, 1);
+	meshes["yellowStar"] = mesh;
+	mesh = hw_object2D::CreateStar("purpleStar", 45, 15, glm::vec3(0.45, 0.16, 0.95), true, 1);
+	meshes["purpleStar"] = mesh;
+
 }
 
 MeshesCreator& MeshesCreator::getInstance() {
@@ -91,6 +100,13 @@ Cell::Cell(int i, int j) {
 	this->width = 75;
 	this->heigth = 75;
 
+	this->hitboxCenter = center;
+	this->hitBoxRadius = 60;
+
+	this->line = i;
+
+	this->shotDelta = 2000;
+
 	glm::mat3 modelMatrix = transform2D::Translate(this->center.x, this->center.y);
 	this->pressBoxCenter = glm::vec2(this->center.x, this->center.y);
 	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("cell"), modelMatrix);
@@ -105,6 +121,7 @@ const glm::vec2& Cell::getCenter() const {
 bool Cell::occupy(unitType type) {
 	if (this->type.has_value())
 		return false;
+	timer = shotDelta;
 	switch (type) {
 	case ORANGE:
 		this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("orangeRomb"), transform2D::Translate(center.x, center.y));
@@ -128,6 +145,17 @@ void Cell::free() {
 		return;
 	this->type = {};
 	objectData.pop_back();
+}
+
+std::optional<unitType> Cell::shoot(Enemy enemy, float deltaTime) {
+	if (this->type.has_value() && enemy.getLine() == this->line && enemy.getType() == this->type) {
+		timer += deltaTime;
+		if (timer >= this->shotDelta) {
+			timer = 0;
+			return this->type;
+		}
+	}
+	return {};
 }
 
 Price::Price(unitType type) {
@@ -258,7 +286,7 @@ const int& Collectable::getStars() const {
 	return this->stars;
 }
 
-Enemy::Enemy(int lineIndex, unitType type) {
+Enemy::Enemy(unitType type, int lineIndex) {
 	int y;
 
 	if (lineIndex == 0) {
@@ -332,5 +360,49 @@ const int& Enemy::getLine() const {
 
 const unitType& Enemy::getType() const {
 	return this->type;
+}
+
+Projectile::Projectile(unitType type, glm::vec2 pos) {
+	Mesh* mesh;
+	switch (type) {
+	case ORANGE:
+		mesh = MeshesCreator::getInstance().getMesh("orangeStar");
+		break;
+	case BLUE:
+		mesh = MeshesCreator::getInstance().getMesh("blueStar");
+		break;
+	case YELLOW:
+		mesh = MeshesCreator::getInstance().getMesh("yellowStar");
+		break;
+	case PURPLE:
+		mesh = MeshesCreator::getInstance().getMesh("purpleStar");
+		break;
+	}
+
+	this->type = type;
+	this->currentPos = glm::vec2(pos.x + 50, pos.y);
+	this->hitboxCenter = this->currentPos;
+	this->hitBoxRadius = 45;
+	this->finalPos = glm::vec2(1860, this->currentPos.y);
+	this->speed = glm::vec2(150, 0);
+	this->angularStep = 0;
+	this->angularSpeed = -2;
+	this->objectData.emplace_back(mesh, transform2D::Translate(this->currentPos.x, this->currentPos.y));
+}
+
+bool Projectile::move(float deltaTime) {
+	bool ret = this->Moveable::move(deltaTime);
+
+	this->angularStep += deltaTime * angularSpeed;
+	glm::mat3 	modelMat = transform2D::Translate(currentPos.x, currentPos.y);
+	modelMat *= transform2D::Rotate(angularStep);
+
+	objectData[0].second = modelMat;
+	hitboxCenter = currentPos;
+	return ret;
+}
+
+bool Projectile::checkCollisionAndType(Enemy& other) const {
+	return this->type == other.getType() && this->checkCollision(other);
 }
 
