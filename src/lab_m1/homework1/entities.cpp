@@ -28,7 +28,7 @@ MeshesCreator::MeshesCreator() {
 	meshes["resourceStar"] = mesh;
 	mesh = hw_object2D::CreateSquare("lifeSquare", 100, glm::vec3(1, 0, 0), true, 0);
 	meshes["lifeSquare"] = mesh;
-	mesh = hw_object2D::CreateStar("collectableStar", 60, 20, glm::vec3(0.9, 0.25, 0.95), true, 1);
+	mesh = hw_object2D::CreateStar("collectableStar", 60, 20, glm::vec3(0.9, 0.25, 0.95), true, 30);
 	meshes["collectableStar"] = mesh;
 	mesh = hw_object2D::CreateHexagon("orangeHex", 60, glm::vec3(1, 0.5, 0.15), true, 1);
 	meshes["orangeHex"] = mesh;
@@ -105,7 +105,7 @@ Cell::Cell(int i, int j) {
 
 	this->line = i;
 
-	this->shotDelta = 2000;
+	this->shotDelta = 1000;
 
 	glm::mat3 modelMatrix = transform2D::Translate(this->center.x, this->center.y);
 	this->pressBoxCenter = glm::vec2(this->center.x, this->center.y);
@@ -156,6 +156,10 @@ std::optional<unitType> Cell::shoot(Enemy enemy, float deltaTime) {
 		}
 	}
 	return {};
+}
+
+bool Cell::validCollision(Enemy& enemy) const {
+	return type.has_value() && this->checkCollision(enemy);
 }
 
 Price::Price(unitType type) {
@@ -318,12 +322,12 @@ Enemy::Enemy(unitType type, int lineIndex) {
 	this->hitBoxRadius = 60;
 	this->type = type;
 	this->line = lineIndex;
-	this->speed = glm::vec2(-100, 0);
+	this->speed = glm::vec2(-180, 0);
 	this->lives = 3;
 	this->finalPos = glm::vec2(100, y);
 
 	this->objectData.emplace_back(mesh, transform2D::Translate(currentPos.x, currentPos.y));
-	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("halfHPHex"), transform2D::Translate(currentPos.x, currentPos.y));
+	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("fullHPHex"), transform2D::Translate(currentPos.x, currentPos.y));
 }
 
 bool Enemy::move(float deltaTime) {
@@ -380,13 +384,19 @@ Projectile::Projectile(unitType type, glm::vec2 pos) {
 	}
 
 	this->type = type;
+	this->damage = 1;
+
 	this->currentPos = glm::vec2(pos.x + 50, pos.y);
+
 	this->hitboxCenter = this->currentPos;
 	this->hitBoxRadius = 45;
+
 	this->finalPos = glm::vec2(1860, this->currentPos.y);
-	this->speed = glm::vec2(150, 0);
+	this->speed = glm::vec2(200, 0);
+
 	this->angularStep = 0;
 	this->angularSpeed = -2;
+
 	this->objectData.emplace_back(mesh, transform2D::Translate(this->currentPos.x, this->currentPos.y));
 }
 
@@ -402,7 +412,12 @@ bool Projectile::move(float deltaTime) {
 	return ret;
 }
 
-bool Projectile::checkCollisionAndType(Enemy& other) const {
-	return this->type == other.getType() && this->checkCollision(other);
+bool Projectile::validCollision(Enemy& enemy) {
+	return this->type == enemy.getType() && this->checkCollision(enemy);
 }
+
+const int& Projectile::getDamage() const {
+	return this->damage;
+}
+
 

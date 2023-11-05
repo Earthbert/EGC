@@ -61,6 +61,8 @@ public:
 	bool occupy(unitType type);
 	void free();
 	std::optional<unitType> shoot(Enemy enemy, float deltaTime);
+	bool validCollision(Enemy& enemy) const;
+
 private:
 	glm::vec2 center;
 	float shotDelta;
@@ -126,9 +128,12 @@ class Projectile : public Drawable, public HasHitbox, public Moveable {
 public:
 	Projectile(unitType type, glm::vec2 pos);
 	bool move(float deltaTime) override;
-	bool checkCollisionAndType(Enemy& other) const;
+	bool validCollision(Enemy& enemy);
+	const int& getDamage() const;
+
 private:
 	unitType type;
+	int damage;
 	float angularSpeed;
 	float angularStep;
 };

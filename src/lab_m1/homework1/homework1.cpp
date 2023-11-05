@@ -18,7 +18,7 @@ using namespace m1;
  */
 
 
-Homework1::Homework1() : uniX(40, 1760), uniY(40, 960), uniTime(0, 4000), uniThree(0, 2), uniUnit(ORANGE, PURPLE) {};
+Homework1::Homework1() : uniX(40, 1760), uniY(40, 960), uniTime(0, 3000), uniThree(0, 2), uniUnit(ORANGE, PURPLE) {};
 
 
 Homework1::~Homework1() = default;
@@ -78,6 +78,25 @@ void Homework1::FrameStart() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void Homework1::CheckCollisions() {
+	for (auto& cellLine : cells)
+		for (auto& cell : cellLine)
+			for (auto& enemy : enemies)
+				if (cell->validCollision(enemy)) {
+					cell->free();
+				}
+
+check_again:
+	for (auto iterP = projectiles.begin(); iterP != projectiles.end(); ++iterP)
+		for (auto iterE = enemies.begin(); iterE != enemies.end(); ++iterE)
+			if (iterP->checkCollision(*iterE)) {
+				if (iterE->getHit(iterP->getDamage()))
+					enemies.erase(iterE);
+				projectiles.erase(iterP);
+				goto check_again;
+			}
+}
+
 
 void Homework1::Update(float deltaTimeSeconds) {
 	const glm::ivec2 resolution = window->GetResolution();
@@ -94,6 +113,8 @@ void Homework1::Update(float deltaTimeSeconds) {
 
 	MoveObjects(deltaTimeSeconds);
 
+	CheckCollisions();
+
 	DrawScene();
 }
 
@@ -105,7 +126,7 @@ void Homework1::CreateRandomEntities(float deltaTime) {
 		for (int i = 0; i < 3; i++)
 			collectables.emplace_back(Collectable(glm::vec2(uniX(rng), uniY(rng))));
 		collectableTimer = 0;
-		collectableDelta = 2000 + uniTime(rng);
+		collectableDelta = uniTime(rng);
 	}
 
 	// Enemies
@@ -113,20 +134,19 @@ void Homework1::CreateRandomEntities(float deltaTime) {
 	if (enemyTimer >= enemyDelta) {
 		enemies.emplace_back(Enemy(static_cast<unitType>(uniUnit(rng)), uniThree(rng)));
 		enemyTimer = 0;
-		enemyDelta += 4000 + uniTime(rng);
+		enemyDelta = uniTime(rng) + 1000;
 	}
 
 	// Shooters
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
 			for (Enemy& enemy : enemies) {
 				auto projectileType = cells[i][j]->shoot(enemy, deltaTime * timeFactor);
 				if (projectileType.has_value()) {
 					projectiles.emplace_back(Projectile(projectileType.value(), cells[i][j]->getCenter()));
 				}
 			}
-		}
-	}
+
 }
 
 void Homework1::DrawScene() {
@@ -240,12 +260,12 @@ void Homework1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_RIGHT)) {
 		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 3; j++)
 				if (cells[i][j]->checkClick(logicCoord)) {
 					cells[i][j]->free();
 				}
-			}
 	}
+
 }
 
 
@@ -255,13 +275,13 @@ void Homework1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) 
 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
 		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 3; j++)
 				if (cells[i][j]->checkClick(logicCoord)) {
 					if (dragingRomb && cells[i][j]->occupy(dragRomb->getUnitType()))
 						gameState.numStars -= dragRomb->getCost();
 					break;
 				}
-			}
+
 		dragingRomb = false;
 	}
 }
@@ -297,18 +317,24 @@ void m1::Homework1::CreatePermanentObjects() {
 }
 
 void Homework1::MoveObjects(float deltaTime) {
+check_again_E:
+
 	for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
 		if (iter->move(deltaTime)) {
 			gameState.numLives--;
+			if (gameState.numLives == 0) {
+				this->Exit();
+			}
 			enemies.erase(iter);
-			break;
+			goto check_again_E;
 		}
 	}
 
+check_again_P:
 	for (auto iter = projectiles.begin(); iter != projectiles.end(); ++iter) {
 		if (iter->move(deltaTime)) {
 			projectiles.erase(iter);
-			break;
+			goto check_again_P;
 		}
 	}
 }
