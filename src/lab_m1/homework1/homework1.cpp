@@ -18,7 +18,7 @@ using namespace m1;
  */
 
 
-Homework1::Homework1() : uniX(40, 1760), uniY(40, 960), uniThree(0, 2) {};
+Homework1::Homework1() : uniX(40, 1760), uniY(40, 960), uniTime(0, 4000), uniThree(0, 2), uniUnit(ORANGE, PURPLE) {};
 
 
 Homework1::~Homework1() = default;
@@ -80,8 +80,6 @@ void Homework1::FrameStart() {
 
 
 void Homework1::Update(float deltaTimeSeconds) {
-	float deltaTime = deltaTimeSeconds * 1000;
-
 	const glm::ivec2 resolution = window->GetResolution();
 
 	// Sets the screen area where to draw - the left half of the window
@@ -92,19 +90,29 @@ void Homework1::Update(float deltaTimeSeconds) {
 	visMatrix = glm::mat3(1);
 	visMatrix *= VisualizationTransf2D();
 
-	CreateRandomEntities(deltaTime);
+	CreateRandomEntities(deltaTimeSeconds);
+
+	moveObjects(deltaTimeSeconds);
 
 	DrawScene();
 }
 
 void Homework1::CreateRandomEntities(float deltaTime) {
 	// Collectables
-	collectableTimer += deltaTime;
+	collectableTimer += deltaTime * 500;
 	if (collectableTimer >= collectableDelta) {
-		int x = uniX(rng);
-		int y = uniY(rng);
-		collectables.emplace_back(new Collectable(glm::vec2(x, y)));
+		for (int i = 0; i < 3; i++)
+			collectables.emplace_back(Collectable(glm::vec2(uniX(rng), uniY(rng))));
 		collectableTimer = 0;
+		collectableDelta = 2000 + uniTime(rng);
+	}
+
+	// Enemies
+	enemyTimer += deltaTime * 500;
+	if (enemyTimer >= enemyDelta) {
+		enemies.emplace_back(Enemy(uniThree(rng), static_cast<unitType>(uniUnit(rng))));
+		enemyTimer = 0;
+		enemyDelta += 4000 + uniTime(rng);
 	}
 }
 
@@ -137,8 +145,12 @@ void m1::Homework1::DrawUI() {
 }
 
 void Homework1::DrawLiveElements() {
-	for (Collectable* collectable : collectables) {
-		DrawObject(*collectable);
+	for (Collectable &collectable : collectables) {
+		DrawObject(collectable);
+	}
+
+	for (Enemy &enemy : enemies) {
+		DrawObject(enemy);
 	}
 }
 
@@ -201,8 +213,8 @@ void Homework1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
 		}
 
 		for (auto iter = collectables.begin(); iter != collectables.end(); iter++) {
-			if ((*iter)->checkClick(logicCoord)) {
-				gameState.numStars = min(gameState.numStars + (*iter)->getStars(), maxStars);
+			if (iter->checkClick(logicCoord)) {
+				gameState.numStars = min(gameState.numStars + iter->getStars(), maxStars);
 				collectables.erase(iter);
 				break;
 			}
@@ -265,6 +277,12 @@ void m1::Homework1::CreatePermanentObjects() {
 	}
 
 	dragRomb = new DragRomb();
+}
+
+void Homework1::moveObjects(float deltaTime) {
+	for (Enemy &enemy : enemies) {
+		enemy.move(deltaTime);
+	}
 }
 
 inline void Homework1::DrawBackground() {

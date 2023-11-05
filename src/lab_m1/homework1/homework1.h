@@ -50,9 +50,9 @@ namespace m1
 		void OnWindowResize(int width, int height) override;
 
 		void CreatePermanentObjects();
+		void moveObjects(float deltaTime);
 
 		void DrawObject(Drawable& object);
-
 		void DrawScene();
 		inline void DrawUI();
 		inline void DrawLiveElements();
@@ -67,9 +67,11 @@ namespace m1
 		glm::vec2 calcLogicSpaceCoord(int x, int y);
 
 		std::mt19937 rng;
+		std::uniform_int_distribution<int> uniTime;
 		std::uniform_int_distribution<int> uniX;
 		std::uniform_int_distribution<int> uniY;
 		std::uniform_int_distribution<int> uniThree;
+		std::uniform_int_distribution<int> uniUnit;
 
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
@@ -96,9 +98,16 @@ namespace m1
 		DragRomb* dragRomb;
 
 		// Live Elements
-		const float collectableDelta = 2000;
+		// Collectables
+		float collectableDelta = 2000;
 		float collectableTimer = 0;
-		std::vector<Collectable*> collectables;
+		std::vector<Collectable> collectables;
+
+		// Enemies
+		float enemyDelta = 1000;
+		float enemyTimer = 0;
+		std::vector<Enemy> enemies;
+
 
 	};
 }   // namespace m1

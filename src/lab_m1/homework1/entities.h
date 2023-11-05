@@ -102,3 +102,17 @@ public:
 private:
 	int stars;
 };
+
+class Enemy : public Drawable, public HasHitbox, public Moveable {
+public:
+	Enemy(int lineIndex, unitType type);
+
+	bool move(float deltaTime) override;
+	bool getHit(int damage);
+	const int& getLine() const;
+	const unitType& getType() const;
+private:
+	int lives;
+	unitType type;
+	int line;
+};

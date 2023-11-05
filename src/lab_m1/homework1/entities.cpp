@@ -12,13 +12,13 @@ MeshesCreator::MeshesCreator() {
 	meshes["backGround"] = mesh;
 	mesh = hw_object2D::CreateSquare("cell", 150, glm::vec3(0, 1, 0.2), true, 0);
 	meshes["cell"] = mesh;
-	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 2);
+	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 10);
 	meshes["orangeRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 2);
+	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 10);
 	meshes["blueRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 2);
+	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 10);
 	meshes["yellowRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 2);
+	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 10);
 	meshes["purpleRomb"] = mesh;
 	mesh = hw_object2D::CreateSquare("priceSquare", 150, glm::vec3(0, 0, 0), false, 0);
 	meshes["priceSquare"] = mesh;
@@ -30,6 +30,20 @@ MeshesCreator::MeshesCreator() {
 	meshes["lifeSquare"] = mesh;
 	mesh = hw_object2D::CreateStar("collectableStar", 60, 20, glm::vec3(0.9, 0.25, 0.95), true, 1);
 	meshes["collectableStar"] = mesh;
+	mesh = hw_object2D::CreateHexagon("orangeHex", 60, glm::vec3(1, 0.5, 0.15), true, 1);
+	meshes["orangeHex"] = mesh;
+	mesh = hw_object2D::CreateHexagon("blueHex", 60, glm::vec3(0.2, 0.5, 0.95), true, 1);
+	meshes["blueHex"] = mesh;
+	mesh = hw_object2D::CreateHexagon("yellowHex", 60, glm::vec3(1, 1, 0.35), true, 1);
+	meshes["yellowHex"] = mesh;
+	mesh = hw_object2D::CreateHexagon("purpleHex", 60, glm::vec3(0.45, 0.16, 0.95), true, 1);
+	meshes["purpleHex"] = mesh;
+	mesh = hw_object2D::CreateHexagon("fullHPHex", 45, glm::vec3(0.114, 0.478, 0.29), true, 2);
+	meshes["fullHPHex"] = mesh;
+	mesh = hw_object2D::CreateHexagon("halfHPHex", 45, glm::vec3(0.97, 0.72, 0), true, 2);
+	meshes["halfHPHex"] = mesh;
+	mesh = hw_object2D::CreateHexagon("lowHPHex", 45, glm::vec3(0.97, 0.18, 0), true, 2);
+	meshes["lowHPHex"] = mesh;
 }
 
 MeshesCreator& MeshesCreator::getInstance() {
@@ -164,6 +178,8 @@ Price::Price(unitType type) {
 	objectData.emplace_back(romb, transform2D::Translate(this->squareCenter.x, this->squareCenter.y));
 }
 
+Price::~Price() = default;
+
 const unitType& Price::getUnitType() const {
 	return this->type;
 }
@@ -241,3 +257,80 @@ Collectable::~Collectable() = default;
 const int& Collectable::getStars() const {
 	return this->stars;
 }
+
+Enemy::Enemy(int lineIndex, unitType type) {
+	int y;
+
+	if (lineIndex == 0) {
+		y = 575;
+	} else if (lineIndex == 1) {
+		y = 350;
+	} else if (lineIndex == 2) {
+		y = 125;
+	}
+
+	Mesh* mesh;
+	switch (type) {
+	case ORANGE:
+		mesh = MeshesCreator::getInstance().getMesh("orangeHex");
+		break;
+	case BLUE:
+		mesh = MeshesCreator::getInstance().getMesh("blueHex");
+		break;
+	case YELLOW:
+		mesh = MeshesCreator::getInstance().getMesh("yellowHex");
+		break;
+	case PURPLE:
+		mesh = MeshesCreator::getInstance().getMesh("purpleHex");
+		break;
+	}
+
+	this->currentPos = glm::vec2(1860, y);
+	this->hitboxCenter = currentPos;
+	this->hitBoxRadius = 60;
+	this->type = type;
+	this->line = lineIndex;
+	this->speed = glm::vec2(-100, 0);
+	this->lives = 3;
+	this->finalPos = glm::vec2(100, y);
+
+	this->objectData.emplace_back(mesh, transform2D::Translate(currentPos.x, currentPos.y));
+	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("halfHPHex"), transform2D::Translate(currentPos.x, currentPos.y));
+}
+
+bool Enemy::move(float deltaTime) {
+	bool ret = this->Moveable::move(deltaTime);
+	objectData[0].second = transform2D::Translate(currentPos.x, currentPos.y);
+	objectData[1].second = transform2D::Translate(currentPos.x, currentPos.y);
+	hitboxCenter = currentPos;
+	return ret;
+}
+
+bool Enemy::getHit(int damage) {
+	this->lives -= damage;
+
+	switch (lives) {
+	case 3:
+		this->objectData[1].first = MeshesCreator::getInstance().getMesh("fullHPHex");
+		break;
+	case 2:
+		this->objectData[1].first = MeshesCreator::getInstance().getMesh("halfHPHex");
+		break;
+	case 1:
+		this->objectData[1].first = MeshesCreator::getInstance().getMesh("lowHPHex");
+		break;
+	}
+
+	if (this->lives <= 0)
+		return true;
+	return  false;
+}
+
+const int& Enemy::getLine() const {
+	return this->line;
+}
+
+const unitType& Enemy::getType() const {
+	return this->type;
+}
+
