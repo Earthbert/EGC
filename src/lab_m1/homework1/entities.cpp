@@ -5,54 +5,30 @@
 using namespace std;
 
 MeshesCreator::MeshesCreator() {
-	Mesh* mesh;
-	mesh = hw_object2D::CreateRectangle("homeBase", 100, 600, glm::vec3(1, 0, 0), true, 0);
-	meshes["homeBase"] = mesh;
-	mesh = hw_object2D::CreateRectangle("backGround", 1800, 1000, glm::vec3(0.2, 0.2, 0.2), true, -1);
-	meshes["backGround"] = mesh;
-	mesh = hw_object2D::CreateSquare("cell", 150, glm::vec3(0, 1, 0.2), true, 0);
-	meshes["cell"] = mesh;
-	mesh = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 10);
-	meshes["orangeRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 10);
-	meshes["blueRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 10);
-	meshes["yellowRomb"] = mesh;
-	mesh = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 10);
-	meshes["purpleRomb"] = mesh;
-	mesh = hw_object2D::CreateSquare("priceSquare", 150, glm::vec3(0, 0, 0), false, 0);
-	meshes["priceSquare"] = mesh;
-	mesh = hw_object2D::CreateStar("priceStar", 20, 10, glm::vec3(0.6, 0.6, 0.6), true, 0);
-	meshes["priceStar"] = mesh;
-	mesh = hw_object2D::CreateStar("resourceStar", 20, 10, glm::vec3(0.6, 0.6, 0.6), true, 0);
-	meshes["resourceStar"] = mesh;
-	mesh = hw_object2D::CreateSquare("lifeSquare", 100, glm::vec3(1, 0, 0), true, 0);
-	meshes["lifeSquare"] = mesh;
-	mesh = hw_object2D::CreateStar("collectableStar", 60, 20, glm::vec3(0.9, 0.25, 0.95), true, 30);
-	meshes["collectableStar"] = mesh;
-	mesh = hw_object2D::CreateHexagon("orangeHex", 60, glm::vec3(1, 0.5, 0.15), true, 1);
-	meshes["orangeHex"] = mesh;
-	mesh = hw_object2D::CreateHexagon("blueHex", 60, glm::vec3(0.2, 0.5, 0.95), true, 1);
-	meshes["blueHex"] = mesh;
-	mesh = hw_object2D::CreateHexagon("yellowHex", 60, glm::vec3(1, 1, 0.35), true, 1);
-	meshes["yellowHex"] = mesh;
-	mesh = hw_object2D::CreateHexagon("purpleHex", 60, glm::vec3(0.45, 0.16, 0.95), true, 1);
-	meshes["purpleHex"] = mesh;
-	mesh = hw_object2D::CreateHexagon("fullHPHex", 45, glm::vec3(0.114, 0.478, 0.29), true, 2);
-	meshes["fullHPHex"] = mesh;
-	mesh = hw_object2D::CreateHexagon("halfHPHex", 45, glm::vec3(0.97, 0.72, 0), true, 2);
-	meshes["halfHPHex"] = mesh;
-	mesh = hw_object2D::CreateHexagon("lowHPHex", 45, glm::vec3(0.97, 0.18, 0), true, 2);
-	meshes["lowHPHex"] = mesh;
-	mesh = hw_object2D::CreateStar("orangeStar", 45, 15, glm::vec3(1, 0.5, 0.15), true, 1);
-	meshes["orangeStar"] = mesh;
-	mesh = hw_object2D::CreateStar("blueStar", 45, 15, glm::vec3(0.2, 0.5, 0.95), true, 1);
-	meshes["blueStar"] = mesh;
-	mesh = hw_object2D::CreateStar("yellowStar", 45, 15, glm::vec3(1, 1, 0.35), true, 1);
-	meshes["yellowStar"] = mesh;
-	mesh = hw_object2D::CreateStar("purpleStar", 45, 15, glm::vec3(0.45, 0.16, 0.95), true, 1);
-	meshes["purpleStar"] = mesh;
-
+	meshes["homeBase"] = hw_object2D::CreateRectangle("homeBase", 100, 600, glm::vec3(1, 0, 0), true, 0);
+	meshes["backGround"] = hw_object2D::CreateRectangle("backGround", 1800, 1000, glm::vec3(0.2, 0.2, 0.2), true, -1);
+	meshes["cell"] = hw_object2D::CreateSquare("cell", 150, glm::vec3(0, 1, 0.2), true, 0);
+	meshes["orangeRomb"] = hw_object2D::CreateRomb("orangeRomb", 60, glm::vec3(1, 0.5, 0.15), 10);
+	meshes["blueRomb"] = hw_object2D::CreateRomb("blueRomb", 60, glm::vec3(0.2, 0.5, 0.95), 10);
+	meshes["yellowRomb"] = hw_object2D::CreateRomb("yellowRomb", 60, glm::vec3(1, 1, 0.35), 10);
+	meshes["purpleRomb"] = hw_object2D::CreateRomb("purpleRomb", 60, glm::vec3(0.45, 0.16, 0.95), 10);
+	meshes["priceSquare"] = hw_object2D::CreateSquare("priceSquare", 150, glm::vec3(0, 0, 0), false, 0);
+	meshes["priceStar"] = hw_object2D::CreateStar("priceStar", 20, 10, glm::vec3(0.6, 0.6, 0.6), true, 0);
+	meshes["resourceStar"] = hw_object2D::CreateStar("resourceStar", 20, 10, glm::vec3(0.6, 0.6, 0.6), true, 0);
+	meshes["lifeSquare"] = hw_object2D::CreateSquare("lifeSquare", 100, glm::vec3(1, 0, 0), true, 0);
+	meshes["collectableStar"] = hw_object2D::CreateStar("collectableStar", 60, 20, glm::vec3(0.9, 0.25, 0.95), true, 30);
+	meshes["orangeHex"] = hw_object2D::CreateHexagon("orangeHex", 60, glm::vec3(1, 0.5, 0.15), true, 1);
+	meshes["blueHex"] = hw_object2D::CreateHexagon("blueHex", 60, glm::vec3(0.2, 0.5, 0.95), true, 1);
+	meshes["yellowHex"] = hw_object2D::CreateHexagon("yellowHex", 60, glm::vec3(1, 1, 0.35), true, 1);
+	meshes["purpleHex"] = hw_object2D::CreateHexagon("purpleHex", 60, glm::vec3(0.45, 0.16, 0.95), true, 1);
+	meshes["fullHPHex"] = hw_object2D::CreateHexagon("fullHPHex", 45, glm::vec3(0.114, 0.478, 0.29), true, 2);
+	meshes["halfHPHex"] = hw_object2D::CreateHexagon("halfHPHex", 45, glm::vec3(0.97, 0.72, 0), true, 2);
+	meshes["lowHPHex"] = hw_object2D::CreateHexagon("lowHPHex", 45, glm::vec3(0.97, 0.18, 0), true, 2);
+	meshes["orangeStar"] = hw_object2D::CreateStar("orangeStar", 45, 15, glm::vec3(1, 0.5, 0.15), true, 1);
+	meshes["blueStar"] = hw_object2D::CreateStar("blueStar", 45, 15, glm::vec3(0.2, 0.5, 0.95), true, 1);
+	meshes["yellowStar"] = hw_object2D::CreateStar("yellowStar", 45, 15, glm::vec3(1, 1, 0.35), true, 1);
+	meshes["purpleStar"] = hw_object2D::CreateStar("purpleStar", 45, 15, glm::vec3(0.45, 0.16, 0.95), true, 1);
+	meshes["goldenStar"] = hw_object2D::CreateStar("goldenStar", 60, 20, glm::vec3(1, 0.85, 0), true, 1);
 }
 
 MeshesCreator& MeshesCreator::getInstance() {
@@ -80,6 +56,8 @@ Background::Background() {
 
 Background::~Background() = default;
 
+Cell::Cell() = default;
+
 Cell::Cell(int i, int j) {
 	if (i == 0) {
 		this->center.y = 575;
@@ -105,7 +83,8 @@ Cell::Cell(int i, int j) {
 
 	this->line = i;
 
-	this->shotDelta = 1000;
+	this->shotDelta = 1.5;
+	this->timer = shotDelta;
 
 	glm::mat3 modelMatrix = transform2D::Translate(this->center.x, this->center.y);
 	this->pressBoxCenter = glm::vec2(this->center.x, this->center.y);
@@ -177,6 +156,8 @@ void Cell::update(float deltaTime) {
 	}
 }
 
+Price::Price() = default;
+
 Price::Price(unitType type) {
 	this->type = type;
 
@@ -235,6 +216,8 @@ const int& Price::getCost() const {
 	return this->cost;
 }
 
+Resource::Resource() = default;
+
 Resource::Resource(int index) {
 	this->firstStarCenter = glm::vec2(1100, 800);
 
@@ -242,6 +225,8 @@ Resource::Resource(int index) {
 }
 
 Resource::~Resource() = default;
+
+Life::Life() = default;
 
 Life::Life(int index) {
 	this->firstLifeCenter = glm::vec2(1130, 880);
@@ -305,6 +290,8 @@ const int& Collectable::getStars() const {
 	return this->stars;
 }
 
+Enemy::Enemy() = default;
+
 Enemy::Enemy(unitType type, int lineIndex) {
 	int y;
 
@@ -344,6 +331,8 @@ Enemy::Enemy(unitType type, int lineIndex) {
 	this->objectData.emplace_back(mesh, transform2D::Translate(currentPos.x, currentPos.y));
 	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("fullHPHex"), transform2D::Translate(currentPos.x, currentPos.y));
 }
+
+Enemy::~Enemy() = default;
 
 bool Enemy::move(float deltaTime) {
 	bool ret = this->Moveable::move(deltaTime);
@@ -449,6 +438,26 @@ bool Projectile::validCollision(Enemy& enemy) {
 
 const int& Projectile::getDamage() const {
 	return this->damage;
+}
+
+GoldenGun::GoldenGun(glm::vec2 center) {
+	this->pressBoxCenter = center;
+	this->heigth = 60;
+	this->width = 60;
+	this->timer = 0;
+	this->timerDelta = 1;
+	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("goldenStar"), transform2D::Translate(center.x, center.y));
+}
+
+GoldenGun::~GoldenGun() = default;
+
+bool GoldenGun::checkTimeLeft(float deltaTime) {
+	timer += deltaTime;
+	if (timer > timerDelta) {
+		timer = 0;
+		return true;
+	}
+	return false;
 }
 
 

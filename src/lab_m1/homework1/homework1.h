@@ -38,7 +38,7 @@ namespace m1
 	private:
 		void FrameStart() override;
 		void CheckCollisions();
-		void UpdateAnimations(float deltaTime);
+		void UpdateEntities(float deltaTime);
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
 
@@ -69,11 +69,12 @@ namespace m1
 		glm::vec2 calcLogicSpaceCoord(int x, int y);
 
 		std::mt19937 rng;
-		std::uniform_int_distribution<int> uniTime;
+		std::uniform_real_distribution<float> uniTime;
 		std::uniform_int_distribution<int> uniX;
 		std::uniform_int_distribution<int> uniY;
 		std::uniform_int_distribution<int> uniThree;
 		std::uniform_int_distribution<int> uniUnit;
+		std::uniform_int_distribution<int> uni20;
 
 		LogicSpace logicSpace;
 		ViewportSpace viewSpace;
@@ -91,22 +92,25 @@ namespace m1
 		bool dragingRomb = false;
 
 		// UI Elements
-		HomeBase* homeBase;
-		Background* background;
-		Cell* cells[3][3];
-		Price* rombPrices[4];
-		Resource* resources[maxStars];
-		Life* lives[maxLives];
-		Defender* dragRomb;
+		HomeBase homeBase;
+		Background background;
+		Cell cells[3][3];
+		Price rombPrices[4];
+		Resource resources[maxStars];
+		Life lives[maxLives];
+		Defender dragRomb;
 
 		// Live Elements
 		// Collectables
-		float collectableDelta = 2000;
+		float collectableDelta = 4;
 		float collectableTimer = 0;
 		std::vector<Collectable> collectables;
 
+		// GoldenGun
+		std::vector<GoldenGun> goldenGuns;
+
 		// Enemies
-		float enemyDelta = 1000;
+		float enemyDelta = 2;
 		float enemyTimer = 0;
 		std::vector<Enemy> enemies;
 

@@ -40,7 +40,9 @@ private:
 
 class Enemy : public Drawable, public HasHitbox, public Moveable {
 public:
+	Enemy();
 	Enemy(unitType type, int lineIndex);
+	~Enemy();
 
 	bool move(float deltaTime) override;
 	bool getHit(int damage);
@@ -60,6 +62,7 @@ private:
 
 class Cell : public Drawable, public Clickable, public HasHitbox {
 public:
+	Cell();
 	Cell(int i, int j);
 	~Cell();
 	const glm::vec2& getCenter() const;
@@ -75,13 +78,14 @@ private:
 
 	glm::vec2 center;
 	float shotDelta;
-	float timer = shotDelta;
+	float timer;
 	int line;
 	std::optional<unitType> type = {};
 };
 
 class Price : public Drawable, public Clickable {
 public:
+	Price();
 	Price(unitType type);
 	~Price();
 	const unitType& getUnitType() const;
@@ -95,6 +99,7 @@ private:
 
 class Resource : public Drawable {
 public:
+	Resource();
 	Resource(int index);
 	~Resource();
 private:
@@ -103,6 +108,7 @@ private:
 
 class Life : public Drawable {
 public:
+	Life();
 	Life(int index);
 	~Life();
 private:
@@ -145,4 +151,15 @@ private:
 	int damage;
 	float angularSpeed;
 	float angularStep;
+};
+
+class GoldenGun : public Drawable, public Clickable {
+public:
+	GoldenGun(glm::vec2 center);
+	~GoldenGun() override;
+
+	bool checkTimeLeft(float deltaTime);
+private:
+	float timer;
+	float timerDelta;
 };

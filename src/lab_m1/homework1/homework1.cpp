@@ -18,7 +18,14 @@ using namespace m1;
  */
 
 
-Homework1::Homework1() : uniX(40, 1760), uniY(40, 960), uniTime(0, 3000), uniThree(0, 2), uniUnit(ORANGE, PURPLE) {};
+Homework1::Homework1() :
+	uniTime(0, 3),
+	uniX(40, 1760),
+	uniY(40, 960),
+	uniThree(0, 2),
+	uniUnit(ORANGE, PURPLE),
+	uni20(1, 20)
+{};
 
 
 Homework1::~Homework1() = default;
@@ -82,24 +89,32 @@ void Homework1::CheckCollisions() {
 	for (auto& cellLine : cells)
 		for (auto& cell : cellLine)
 			for (auto& enemy : enemies)
-				if (cell->validCollision(enemy)) {
-					cell->free();
+				if (cell.validCollision(enemy)) {
+					cell.free();
 				}
 
-check_again:
-	for (auto iterP = projectiles.begin(); iterP != projectiles.end(); ++iterP)
-		for (auto iterE = enemies.begin(); iterE != enemies.end(); ++iterE)
+	for (auto iterP = projectiles.begin(); iterP != projectiles.end();) {
+		bool increment = true;
+		for (auto iterE = enemies.begin(); iterE != enemies.end();) {
 			if (iterP->validCollision(*iterE)) {
 				if (iterE->getHit(iterP->getDamage())) {
 					dyingEnemies.emplace_back(*iterE);
-					enemies.erase(iterE);
+					iterE = enemies.erase(iterE);
 				}
-				projectiles.erase(iterP);
-				goto check_again;
+				iterP = projectiles.erase(iterP);
+				increment = false;
+				break;
 			}
+			++iterE;
+		}
+		if (increment)
+			++iterP;
+	}
+
 }
 
-void Homework1::UpdateAnimations(float deltaTime) {
+
+void Homework1::UpdateEntities(float deltaTime) {
 	for (auto iterE = dyingEnemies.begin(); iterE != dyingEnemies.end();) {
 		if (iterE->update(deltaTime))
 			iterE = dyingEnemies.erase(iterE);
@@ -109,7 +124,14 @@ void Homework1::UpdateAnimations(float deltaTime) {
 
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			cells[i][j]->update(deltaTime);
+			cells[i][j].update(deltaTime);
+
+	for (auto iter = goldenGuns.begin(); iter != goldenGuns.end();) {
+		if (iter->checkTimeLeft(deltaTime)) {
+			iter = goldenGuns.erase(iter);
+		} else
+			++iter;
+	}
 }
 
 
@@ -130,37 +152,39 @@ void Homework1::Update(float deltaTimeSeconds) {
 
 	CheckCollisions();
 
-	UpdateAnimations(deltaTimeSeconds);
+	UpdateEntities(deltaTimeSeconds);
 
 	DrawScene();
 }
 
 void Homework1::CreateRandomEntities(float deltaTime) {
 	// Collectables
-	const float timeFactor = 500;
-	collectableTimer += deltaTime * timeFactor;
+	collectableTimer += deltaTime;
 	if (collectableTimer >= collectableDelta) {
 		for (int i = 0; i < 3; i++)
-			collectables.emplace_back(Collectable(glm::vec2(uniX(rng), uniY(rng))));
+			collectables.emplace_back(glm::vec2(uniX(rng), uniY(rng)));
 		collectableTimer = 0;
-		collectableDelta = uniTime(rng);
+		collectableDelta = uniTime(rng) + 3;
+		if (uni20(rng) == 20) {
+			goldenGuns.emplace_back(glm::vec2(uniX(rng), uniY(rng)));
+		}
 	}
 
 	// Enemies
-	enemyTimer += deltaTime * timeFactor;
+	enemyTimer += deltaTime;
 	if (enemyTimer >= enemyDelta) {
-		enemies.emplace_back(Enemy(static_cast<unitType>(uniUnit(rng)), uniThree(rng)));
+		enemies.emplace_back(static_cast<unitType>(uniUnit(rng)), uniThree(rng));
 		enemyTimer = 0;
-		enemyDelta = uniTime(rng) + 1000;
+		enemyDelta = uniTime(rng) + 2;
 	}
 
 	// Shooters
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			for (Enemy& enemy : enemies) {
-				auto projectileType = cells[i][j]->shoot(enemy, deltaTime * timeFactor);
+				auto projectileType = cells[i][j].shoot(enemy, deltaTime);
 				if (projectileType.has_value()) {
-					projectiles.emplace_back(Projectile(projectileType.value(), cells[i][j]->getCenter()));
+					projectiles.emplace_back(projectileType.value(), cells[i][j].getCenter());
 				}
 			}
 
@@ -173,43 +197,42 @@ void Homework1::DrawScene() {
 }
 
 void m1::Homework1::DrawUI() {
-	DrawObject(*homeBase);
+	DrawObject(homeBase);
 
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			DrawObject(*cells[i][j]);
+			DrawObject(cells[i][j]);
 
 	for (int i = 0; i < 4; i++)
-		DrawObject(*rombPrices[i]);
+		DrawObject(rombPrices[i]);
 
 	for (int i = 0; i < gameState.numStars; ++i) {
-		DrawObject(*resources[i]);
+		DrawObject(resources[i]);
 	}
 
 	for (int i = 0; i < gameState.numLives; ++i) {
-		DrawObject(*lives[i]);
+		DrawObject(lives[i]);
 	}
 
 	if (dragingRomb)
-		DrawObject(*dragRomb);
+		DrawObject(dragRomb);
 }
 
 void Homework1::DrawLiveElements() {
-	for (Collectable& collectable : collectables) {
+	for (Collectable& collectable : collectables)
 		DrawObject(collectable);
-	}
 
-	for (Enemy& enemy : enemies) {
+	for (Enemy& enemy : enemies)
 		DrawObject(enemy);
-	}
 
-	for (Projectile& projectile : projectiles) {
+	for (Projectile& projectile : projectiles)
 		DrawObject(projectile);
-	}
 
-	for (Enemy& enemy : dyingEnemies) {
+	for (Enemy& enemy : dyingEnemies)
 		DrawObject(enemy);
-	}
+
+	for (GoldenGun &goldenGun : goldenGuns)
+		DrawObject(goldenGun);
 }
 
 void Homework1::DrawObject(Drawable& object) {
@@ -249,7 +272,7 @@ void Homework1::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) {
 	glm::vec2 logicCoord = calcLogicSpaceCoord(mouseX, mouseY);
 	// Add mouse move event
 	if (window->MouseHold(GLFW_MOUSE_BUTTON_LEFT)) {
-		dragRomb->changePos(logicCoord);
+		dragRomb.changePos(logicCoord);
 	}
 }
 
@@ -259,31 +282,43 @@ void Homework1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
 	glm::vec2 logicCoord = calcLogicSpaceCoord(mouseX, mouseY);
 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
-		for (Price* rombPrice : rombPrices) {
-			if (rombPrice->checkClick(logicCoord)) {
-				if (rombPrice->getCost() <= gameState.numStars) {
+		for (Price& rombPrice : rombPrices) {
+			if (rombPrice.checkClick(logicCoord)) {
+				if (rombPrice.getCost() <= gameState.numStars) {
 					dragingRomb = true;
-					dragRomb->changeColor(rombPrice->getUnitType());
-					dragRomb->changePos(logicCoord);
+					dragRomb.changeColor(rombPrice.getUnitType());
+					dragRomb.changePos(logicCoord);
 				}
 				break;
 			}
 		}
 
-		for (auto iter = collectables.begin(); iter != collectables.end(); iter++) {
+		for (auto iter = collectables.begin(); iter != collectables.end();) {
 			if (iter->checkClick(logicCoord)) {
 				gameState.numStars = min(gameState.numStars + iter->getStars(), maxStars);
-				collectables.erase(iter);
-				break;
-			}
+				iter = collectables.erase(iter);
+			} else
+				++iter;
+		}
+
+		for (auto iter = goldenGuns.begin(); iter != goldenGuns.end();) {
+			if (iter->checkClick(logicCoord)) {
+				for (auto &enemy : enemies) {
+					enemy.getHit(3);
+				}
+				dyingEnemies.insert(dyingEnemies.begin(), enemies.begin(), enemies.end());
+				enemies.clear();
+				iter = goldenGuns.erase(iter);
+			} else
+				++iter;
 		}
 	}
 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_RIGHT)) {
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
-				if (cells[i][j]->checkClick(logicCoord)) {
-					cells[i][j]->free();
+				if (cells[i][j].checkClick(logicCoord)) {
+					cells[i][j].free();
 				}
 	}
 
@@ -297,9 +332,9 @@ void Homework1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
-				if (cells[i][j]->checkClick(logicCoord)) {
-					if (dragingRomb && cells[i][j]->occupy(dragRomb->getUnitType()))
-						gameState.numStars -= dragRomb->getCost();
+				if (cells[i][j].checkClick(logicCoord)) {
+					if (dragingRomb && cells[i][j].occupy(dragRomb.getUnitType()))
+						gameState.numStars -= dragRomb.getCost();
 					break;
 				}
 
@@ -314,27 +349,27 @@ void Homework1::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) 
 void Homework1::OnWindowResize(int width, int height) {}
 
 void m1::Homework1::CreatePermanentObjects() {
-	background = new Background();
-	homeBase = new HomeBase();
+	background = Background();
+	homeBase = HomeBase();
 
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			cells[i][j] = new Cell(i, j);
+			cells[i][j] = Cell(i, j);
 
-	rombPrices[0] = new Price(ORANGE);
-	rombPrices[1] = new Price(BLUE);
-	rombPrices[2] = new Price(YELLOW);
-	rombPrices[3] = new Price(PURPLE);
+	rombPrices[0] = Price(ORANGE);
+	rombPrices[1] = Price(BLUE);
+	rombPrices[2] = Price(YELLOW);
+	rombPrices[3] = Price(PURPLE);
 
 	for (int i = 0; i < maxStars; ++i) {
-		resources[i] = new Resource(i);
+		resources[i] = Resource(i);
 	}
 
 	for (int i = 0; i < maxLives; ++i) {
-		lives[i] = new Life(i);
+		lives[i] = Life(i);
 	}
 
-	dragRomb = new Defender();
+	dragRomb = Defender();
 }
 
 void Homework1::MoveObjects(float deltaTime) {
@@ -358,7 +393,7 @@ void Homework1::MoveObjects(float deltaTime) {
 }
 
 inline void Homework1::DrawBackground() {
-	DrawObject(*background);
+	DrawObject(background);
 }
 
 glm::vec2 Homework1::calcLogicSpaceCoord(int x, int y) {
