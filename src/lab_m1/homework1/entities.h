@@ -68,7 +68,7 @@ public:
 	const glm::vec2& getCenter() const;
 	bool occupy(unitType type);
 	void free();
-	std::optional<unitType> shoot(Enemy enemy, float deltaTime);
+	std::optional<unitType> shoot(Enemy& enemy);
 	bool validCollision(Enemy& enemy) const;
 
 	void update(float deltaTime);

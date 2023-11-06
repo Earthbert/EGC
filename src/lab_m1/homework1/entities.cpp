@@ -125,13 +125,14 @@ void Cell::free() {
 	animation = true;
 }
 
-std::optional<unitType> Cell::shoot(Enemy enemy, float deltaTime) {
-	if (animation == false && this->type.has_value() && enemy.getLine() == this->line && enemy.getType() == this->type) {
-		timer += deltaTime;
-		if (timer >= this->shotDelta) {
-			timer = 0;
-			return this->type;
-		}
+std::optional<unitType> Cell::shoot(Enemy& enemy) {
+	if (animation == false
+		&& this->type.has_value()
+		&& timer >= this->shotDelta
+		&& enemy.getLine() == this->line
+		&& enemy.getType() == this->type) {
+		timer = 0;
+		return this->type;
 	}
 	return {};
 }
@@ -153,6 +154,8 @@ void Cell::update(float deltaTime) {
 			animation = false;
 			scale = 1;
 		}
+	} else {
+		timer += deltaTime;
 	}
 }
 

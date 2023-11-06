@@ -182,7 +182,7 @@ void Homework1::CreateRandomEntities(float deltaTime) {
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			for (Enemy& enemy : enemies) {
-				auto projectileType = cells[i][j].shoot(enemy, deltaTime);
+				auto projectileType = cells[i][j].shoot(enemy);
 				if (projectileType.has_value()) {
 					projectiles.emplace_back(projectileType.value(), cells[i][j].getCenter());
 				}
