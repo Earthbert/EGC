@@ -251,13 +251,13 @@ Life::Life(int index) {
 
 Life::~Life() = default;
 
-DragRomb::DragRomb() {
+Defender::Defender() {
 	objectData.emplace_back(MeshesCreator::getInstance().getMesh("blueRomb"), transform2D::Translate(0, 0));
 }
 
-DragRomb::~DragRomb() = default;
+Defender::~Defender() = default;
 
-void DragRomb::changeColor(unitType type) {
+void Defender::changeColor(unitType type) {
 	this->type = type;
 	switch (type) {
 	case ORANGE:
@@ -279,23 +279,23 @@ void DragRomb::changeColor(unitType type) {
 	}
 }
 
-void DragRomb::changePos(glm::vec2 pos) {
+void Defender::changePos(glm::vec2 pos) {
 	this->objectData[0].second = transform2D::Translate(pos.x, pos.y);
 }
 
-const unitType& DragRomb::getUnitType() const {
+const unitType& Defender::getUnitType() const {
 	return this->type;
 }
 
-const int& DragRomb::getCost() const {
+const int& Defender::getCost() const {
 	return this->cost;
 }
 
 Collectable::Collectable(glm::vec2 center) {
 	this->stars = 1;
 	this->pressBoxCenter = center;
-	this->heigth = 40;
-	this->width = 40;
+	this->heigth = 60;
+	this->width = 60;
 	this->objectData.emplace_back(MeshesCreator::getInstance().getMesh("collectableStar"), transform2D::Translate(center.x, center.y));
 }
 

@@ -109,10 +109,10 @@ private:
 	glm::vec2 firstLifeCenter;
 };
 
-class DragRomb : public Drawable {
+class Defender : public Drawable {
 public:
-	DragRomb();
-	~DragRomb();
+	Defender();
+	~Defender();
 
 	void changeColor(unitType type);
 	void changePos(glm::vec2 pos);

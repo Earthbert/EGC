@@ -89,7 +89,7 @@ void Homework1::CheckCollisions() {
 check_again:
 	for (auto iterP = projectiles.begin(); iterP != projectiles.end(); ++iterP)
 		for (auto iterE = enemies.begin(); iterE != enemies.end(); ++iterE)
-			if (iterP->checkCollision(*iterE)) {
+			if (iterP->validCollision(*iterE)) {
 				if (iterE->getHit(iterP->getDamage())) {
 					dyingEnemies.emplace_back(*iterE);
 					enemies.erase(iterE);
@@ -334,29 +334,26 @@ void m1::Homework1::CreatePermanentObjects() {
 		lives[i] = new Life(i);
 	}
 
-	dragRomb = new DragRomb();
+	dragRomb = new Defender();
 }
 
 void Homework1::MoveObjects(float deltaTime) {
-check_again_E:
-
-	for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
+	for (auto iter = enemies.begin(); iter != enemies.end();) {
 		if (iter->move(deltaTime)) {
 			gameState.numLives--;
 			if (gameState.numLives == 0) {
 				this->Exit();
 			}
-			enemies.erase(iter);
-			goto check_again_E;
-		}
+			iter = enemies.erase(iter);
+		} else
+			++iter;
 	}
 
-check_again_P:
-	for (auto iter = projectiles.begin(); iter != projectiles.end(); ++iter) {
+	for (auto iter = projectiles.begin(); iter != projectiles.end();) {
 		if (iter->move(deltaTime)) {
-			projectiles.erase(iter);
-			goto check_again_P;
-		}
+			iter = projectiles.erase(iter);
+		} else
+			++iter;
 	}
 }
 

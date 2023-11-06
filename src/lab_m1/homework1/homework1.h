@@ -97,7 +97,7 @@ namespace m1
 		Price* rombPrices[4];
 		Resource* resources[maxStars];
 		Life* lives[maxLives];
-		DragRomb* dragRomb;
+		Defender* dragRomb;
 
 		// Live Elements
 		// Collectables
@@ -115,6 +115,5 @@ namespace m1
 
 		// Animations
 		std::vector<Enemy> dyingEnemies;
-		bool cellAnimation[3][3];
 	};
 }   // namespace m1
