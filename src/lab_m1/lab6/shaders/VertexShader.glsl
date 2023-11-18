@@ -1,4 +1,4 @@
-#version 330
+#version 410
 
 // Input
 // TODO(student): Get vertex attributes from each location
@@ -16,10 +16,10 @@ uniform float Time;
 
 // Output
 // TODO(student): Output values to fragment shader
-out vec3 frag_position;
-out vec3 frag_color;
-out vec3 frag_normal;
-out vec2 frag_texture;
+layout(location = 0) out vec3 frag_position;
+layout(location = 1) out vec3 frag_normal;
+layout(location = 2) out vec3 frag_color;
+layout(location = 3) out vec2 frag_texture;
 
 void main()
 {
@@ -32,11 +32,11 @@ void main()
     vec3 position = v_position;
 
     position.x = v_position.x + cos(Time) * 2.0;
-    position.y = v_position.y + cos(Time) * 1.0;
+    position.y = v_position.y + sin(Time) * 1.0;
     position.z = v_position.z + cos(Time) * 0.5;
 
-    frag_color.x += cos(Time) * 0.2;
-    frag_color.y += cos(Time) * 0.5;
+    frag_color.x += -cos(Time) * 0.2;
+    frag_color.y += sin(Time) * 0.5;
     frag_color.z += cos(Time) * 0.3;
 
     // TODO(student): Compute gl_Position
