@@ -34,5 +34,7 @@ namespace m1
         unsigned int materialShininess;
         float materialKd;
         float materialKs;
+
+        int specular_type = 1;
     };
 }   // namespace m1
