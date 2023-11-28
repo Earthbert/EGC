@@ -69,17 +69,15 @@ void m1::Homework2::OnKeyPress(int key, int mods) {}
 void m1::Homework2::OnKeyRelease(int key, int mods) {}
 
 void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) {
-	constexpr float sensivity = 0.001f;
-
 	if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
-		if (window->GetSpecialKeyState() == 0) {
-			camera.RotateThirdPerson_OX(sensivity * static_cast<float>(-deltaY));
-			camera.RotateThirdPerson_OY(sensivity * static_cast<float>(-deltaX));
-		}
+		constexpr float sensivity = 0.001f;
+		camera.RotateThirdPerson_OX(sensivity * static_cast<float>(-deltaY));
+		camera.RotateThirdPerson_OY(sensivity * static_cast<float>(-deltaX));
 	} else {
-		if (deltaX > 0)
+		constexpr float sensivity = 0.003f;
+		if (deltaX > 0 && abs(deltaX) < 200)
 			playerTank.rotateTurretRight(sensivity * static_cast<float>(deltaX));
-		else
+		else if (abs(deltaX) < 200)
 			playerTank.rotateTurretLeft(sensivity * static_cast<float>(-deltaX));
 	}
 }
