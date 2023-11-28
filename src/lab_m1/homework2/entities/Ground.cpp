@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ground.h"
+#include "ground.h"
 
 #include "lab_m1/homework2/colors.h"
 #include "lab_m1/homework2/consts.h"

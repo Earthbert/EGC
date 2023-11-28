@@ -1,11 +1,11 @@
 #pragma once
 #include "hw2_camera.h"
-#include "entities/Entity.h"
+#include "entities/entity.h"
 #include "random_num.h"
 #include "components/simple_scene.h"
-#include "entities/Ground.h"
-#include "entities/PlayerTank.h"
-#include "entities/Tank.h"
+#include "entities/ground.h"
+#include "entities/playerTank.h"
+#include "entities/tank.h"
 
 namespace m1
 {

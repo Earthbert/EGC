@@ -1,5 +1,8 @@
 #pragma once
-#include "Entity.h"
+#include <optional>
+
+#include "entity.h"
+#include "missile.h"
 
 class Tank : public Entity {
 public:
@@ -18,16 +21,16 @@ public:
 
 	void rotateTurretLeft(float deltaTimeSeconds);
 	void rotateTurretRight(float deltaTimeSeconds);
+
+	std::optional<Missile> shoot();
+
+	glm::vec3 getCenter() const;
 protected:
 	glm::vec3 center;
 	glm::vec3 tankDirection;
 	glm::vec3 turretDirection;
 
-	glm::mat4 rotationMatrix = glm::mat4(1);
-	glm::mat4 rotationMatrixTurret = glm::mat4(1);
-	glm::mat4 translationMatrix = glm::mat4(1);
-
-	float tankSpeed = 10.0f;
+	float tankSpeed = 5.0f;
 	float tankAngularSpeed = 2.0f;
 	float turretAngularSpeed = 2.0f;
 };

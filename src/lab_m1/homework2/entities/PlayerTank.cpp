@@ -1,4 +1,4 @@
-#include "PlayerTank.h"
+#include "playerTank.h"
 
 PlayerTank::PlayerTank(const glm::vec3 center) : Tank(center) {}
 

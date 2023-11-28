@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Entity.h"
+#include "entity.h"
 
 std::vector<RenderInfo>& Entity::getRenderInfo() {
 	return renderInfo;

@@ -1,4 +1,4 @@
-#include "Tank.h"
+#include "tank.h"
 
 #include "lab_m1/homework2/colors.h"
 #include "lab_m1/homework2/consts.h"
@@ -79,4 +79,8 @@ void Tank::rotateTurretRight(const float deltaTimeSeconds) {
 	for (int i = 2; i < 3; i++) {
 		renderInfo[i].model_matrix = renderInfo[i].model_matrix * rotationMatrix;
 	}
+}
+
+glm::vec3 Tank::getCenter() const {
+	return center;
 }

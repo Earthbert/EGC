@@ -35,7 +35,6 @@ public:
 	}
 
 	void TranslateUpward(float distance) {
-		// TODO(student): Translate the camera using the `up` vector.
 		position = position + glm::normalize(up) * distance;
 	}
 

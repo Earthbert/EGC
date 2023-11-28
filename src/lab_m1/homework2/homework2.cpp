@@ -2,8 +2,8 @@
 
 #include "colors.h"
 #include "consts.h"
-#include "entities/Entity.h"
-#include "entities/Ground.h"
+#include "entities/entity.h"
+#include "entities/ground.h"
 
 m1::Homework2::Homework2() = default;
 
