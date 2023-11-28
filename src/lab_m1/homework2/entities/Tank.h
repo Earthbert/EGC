@@ -10,10 +10,6 @@ public:
 	Tank();
 	~Tank();
 
-  /*  Tank(const Tank& other);
-
-    Tank& operator=(const Tank& other);*/
-
 	void moveForward(float deltaTimeSeconds);
 	void moveBackward(float deltaTimeSeconds);
 	void rotateLeft(float deltaTimeSeconds);
@@ -22,9 +18,13 @@ public:
 	void rotateTurretLeft(float deltaTimeSeconds);
 	void rotateTurretRight(float deltaTimeSeconds);
 
-	std::optional<Missile> shoot();
+	std::optional<Missile> shoot(float deltaTimeSeconds);
 
 	glm::vec3 getCenter() const;
+
+	float getTankSpeed() const;
+	float getTankAngularSpeed() const;
+	glm::vec3 getTankDirection() const;
 protected:
 	glm::vec3 center;
 	glm::vec3 tankDirection;

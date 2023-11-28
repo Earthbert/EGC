@@ -11,7 +11,7 @@ m1::Homework2::~Homework2() = default;
 
 void m1::Homework2::Init() {
 	projectionMatrix = glm::perspective(RADIANS(100), window->props.aspectRatio, 0.01f, 200.0f);
-	camera = HW2_Camera(glm::vec3(0, 2, 3.5f), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
+	camera = HW2_Camera();
 
 	CreateShaders();
 	CreateMeshes();
@@ -35,48 +35,32 @@ void m1::Homework2::Update(float deltaTimeSeconds) {
 void m1::Homework2::FrameEnd() {}
 
 void m1::Homework2::OnInputUpdate(float deltaTime, int mods) {
-	if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
-		float cameraSpeed = 2.0f;
+	// Tank movement
+	if (window->KeyHold(GLFW_KEY_W)) {
+		playerTank.moveForward(deltaTime);
+		camera.Move(deltaTime * this->playerTank.getTankSpeed(), this->playerTank.getTankDirection());
+	}
 
-		if (window->KeyHold(GLFW_KEY_W)) {
-			camera.TranslateForward(deltaTime * cameraSpeed);
-		}
+	if (window->KeyHold(GLFW_KEY_A)) {
+		playerTank.rotateLeft(deltaTime);
+		camera.RotateThirdPerson_OY(deltaTime * this->playerTank.getTankAngularSpeed());
+	}
 
-		if (window->KeyHold(GLFW_KEY_A)) {
-			camera.TranslateRight(-deltaTime * cameraSpeed);
-		}
+	if (window->KeyHold(GLFW_KEY_S)) {
+		playerTank.moveBackward(deltaTime);
+		camera.Move(-deltaTime * this->playerTank.getTankSpeed(), this->playerTank.getTankDirection());
+	}
 
-		if (window->KeyHold(GLFW_KEY_S)) {
-			camera.TranslateForward(-deltaTime * cameraSpeed);
-		}
-
-		if (window->KeyHold(GLFW_KEY_D)) {
-			camera.TranslateRight(deltaTime * cameraSpeed);
-		}
-
-		if (window->KeyHold(GLFW_KEY_Q)) {
-			camera.TranslateUpward(-deltaTime * cameraSpeed);
-		}
-
-		if (window->KeyHold(GLFW_KEY_E)) {
-			camera.TranslateUpward(deltaTime * cameraSpeed);
-		}
-	} else {
-		if (window->KeyHold(GLFW_KEY_W)) {
-			playerTank.moveForward(deltaTime);
-		}
-
-		if (window->KeyHold(GLFW_KEY_A)) {
-			playerTank.rotateLeft(deltaTime);
-		}
-
-		if (window->KeyHold(GLFW_KEY_S)) {
-			playerTank.moveBackward(deltaTime);
-		}
-
-		if (window->KeyHold(GLFW_KEY_D)) {
-			playerTank.rotateRight(deltaTime);
-		}
+	if (window->KeyHold(GLFW_KEY_D)) {
+		playerTank.rotateRight(deltaTime);
+		camera.RotateThirdPerson_OY(-deltaTime * this->playerTank.getTankAngularSpeed());
+	}
+	// Zoom in/out
+	if (window->KeyHold(GLFW_KEY_E)) {
+		camera.Zoom(deltaTime);
+	}
+	if (window->KeyHold(GLFW_KEY_Q)) {
+		camera.Zoom(-deltaTime);
 	}
 }
 
@@ -84,16 +68,19 @@ void m1::Homework2::OnKeyPress(int key, int mods) {}
 
 void m1::Homework2::OnKeyRelease(int key, int mods) {}
 
-
 void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) {
-	if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
-		float sensivityOX = 0.001f;
-		float sensivityOY = 0.001f;
+	constexpr float sensivity = 0.001f;
 
+	if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
 		if (window->GetSpecialKeyState() == 0) {
-			camera.RotateFirstPerson_OX(-deltaY * sensivityOX);
-			camera.RotateFirstPerson_OY(-deltaX * sensivityOY);
+			camera.RotateThirdPerson_OX(sensivity * static_cast<float>(-deltaY));
+			camera.RotateThirdPerson_OY(sensivity * static_cast<float>(-deltaX));
 		}
+	} else {
+		if (deltaX > 0)
+			playerTank.rotateTurretRight(sensivity * static_cast<float>(deltaX));
+		else
+			playerTank.rotateTurretLeft(sensivity * static_cast<float>(-deltaX));
 	}
 }
 

@@ -67,7 +67,7 @@ void Tank::rotateTurretLeft(const float deltaTimeSeconds) {
 
 	turretDirection = glm::vec3(rotationMatrix * glm::vec4(turretDirection, 1));
 
-	for (int i = 2; i < 3; i++) {
+	for (int i = 2; i <= 3; i++) {
 		renderInfo[i].model_matrix = renderInfo[i].model_matrix * rotationMatrix;
 	}
 }
@@ -76,11 +76,23 @@ void Tank::rotateTurretRight(const float deltaTimeSeconds) {
 
 	turretDirection = glm::vec3(rotationMatrix * glm::vec4(turretDirection, 1));
 
-	for (int i = 2; i < 3; i++) {
+	for (int i = 2; i <= 3; i++) {
 		renderInfo[i].model_matrix = renderInfo[i].model_matrix * rotationMatrix;
 	}
 }
 
 glm::vec3 Tank::getCenter() const {
 	return center;
+}
+
+float Tank::getTankSpeed() const {
+	return tankSpeed;
+}
+
+float Tank::getTankAngularSpeed() const {
+	return tankAngularSpeed;
+}
+
+glm::vec3 Tank::getTankDirection() const {
+	return tankDirection;
 }
