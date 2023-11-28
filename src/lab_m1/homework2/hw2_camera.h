@@ -57,10 +57,10 @@ public:
 	}
 
 	void Zoom(float distance) {
-		position = position + glm::normalize(forward) * distance;
-		distanceToTarget -= distance;
-		if (distanceToTarget < 3) {
-			distanceToTarget = 3;
+		const float newDistanceToTarget = distanceToTarget - distance;
+		if (3 < newDistanceToTarget && newDistanceToTarget < 10) {
+			distanceToTarget = newDistanceToTarget;
+			position = position + glm::normalize(forward) * distance;
 		}
 	}
 
