@@ -12,7 +12,7 @@ struct RenderInfo {
 
 class Entity {
 public:
-	virtual std::vector<RenderInfo>& getRenderInfo();
+	std::vector<RenderInfo>& getRenderInfo();
 
 protected:
 	std::vector<RenderInfo> renderInfo;

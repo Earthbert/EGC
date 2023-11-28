@@ -1,7 +1,7 @@
 #include "homework2.h"
 
 #include "colors.h"
-#include "const_strings.h"
+#include "consts.h"
 #include "entities/Entity.h"
 #include "entities/Ground.h"
 
@@ -29,6 +29,7 @@ void m1::Homework2::FrameStart() {
 void m1::Homework2::Update(float deltaTimeSeconds) {
 	RenderObject(ground);
 	RenderObject(playerTank);
+	DrawCoordinateSystem(camera.GetViewMatrix(), projectionMatrix);
 }
 
 void m1::Homework2::FrameEnd() {}
@@ -59,6 +60,22 @@ void m1::Homework2::OnInputUpdate(float deltaTime, int mods) {
 
 		if (window->KeyHold(GLFW_KEY_E)) {
 			camera.TranslateUpward(deltaTime * cameraSpeed);
+		}
+	} else {
+		if (window->KeyHold(GLFW_KEY_W)) {
+			playerTank.moveForward(deltaTime);
+		}
+
+		if (window->KeyHold(GLFW_KEY_A)) {
+			playerTank.rotateLeft(deltaTime);
+		}
+
+		if (window->KeyHold(GLFW_KEY_S)) {
+			playerTank.moveBackward(deltaTime);
+		}
+
+		if (window->KeyHold(GLFW_KEY_D)) {
+			playerTank.rotateRight(deltaTime);
 		}
 	}
 }
@@ -156,9 +173,19 @@ void m1::Homework2::CreateMeshes() {
 		mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "homework2"), "cannon.obj");
 		meshes[mesh->GetMeshID()] = mesh;
 	}
+	{
+		Mesh* mesh = new Mesh(HW2_BALL_MESH);
+		mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "homework2"), "sphere.obj");
+		meshes[mesh->GetMeshID()] = mesh;
+	}
+	{
+		Mesh* mesh = new Mesh(HW2_BUILDING_MESH);
+		mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "homework2"), "box.obj");
+		meshes[mesh->GetMeshID()] = mesh;
+	}
 }
 
 void m1::Homework2::CreateEntities() {
 	ground = Ground();
-	playerTank = Tank(Tank::type::PLAYER, glm::vec4(0));
+	playerTank = PlayerTank(glm::vec4(0));
 }

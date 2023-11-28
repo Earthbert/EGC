@@ -4,6 +4,7 @@
 #include "random_num.h"
 #include "components/simple_scene.h"
 #include "entities/Ground.h"
+#include "entities/PlayerTank.h"
 #include "entities/Tank.h"
 
 namespace m1
@@ -42,7 +43,7 @@ namespace m1
 		// Static Entities
 		Ground ground;
 		// Dynamic Entities
-		Tank playerTank;
+		PlayerTank playerTank;
 	protected:
 		RandomNum generator;
 	};

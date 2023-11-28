@@ -1,6 +1,0 @@
-#define HW2_BASIC_SHADER "basic_shader"
-#define HW2_GROUND_MESH "ground_mesh"
-#define HW2_TRACK_MESH "track_mesh"
-#define HW2_BODY_MESH "body_mesh"
-#define HW2_TURRET_MESH "turret_mesh"
-#define HW2_CANNON_MESH "cannon_mesh"
