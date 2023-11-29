@@ -3,6 +3,7 @@
 #include "entities/entity.h"
 #include "random_num.h"
 #include "components/simple_scene.h"
+#include "entities/border.h"
 #include "entities/ground.h"
 #include "entities/house.h"
 #include "entities/playerTank.h"
@@ -34,6 +35,7 @@ namespace m1
 
 		void RenderEntities();
 		void UpdateEntities(float deltaTimeSeconds);
+		void CheckCollisions(float deltaTimeSeconds);
 
 		void RenderObject(Entity &entity);
 		void RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color);
@@ -48,6 +50,7 @@ namespace m1
 		// Static Entities
 		Ground ground;
 		std::vector<House> houses;
+		std::vector<Border> borders;
 		// Dynamic Entities
 		PlayerTank playerTank;
 		//std::vector<EnemyTank> enemyTanks;

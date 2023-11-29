@@ -3,7 +3,7 @@
 #include "lab_m1/homework2/colors.h"
 #include "lab_m1/homework2/consts.h"
 
-Tank::Tank(const glm::vec3 center) {
+Tank::Tank(const glm::vec3 center) : Collidable(center, HW2_TANK_RADIUS) {
 	this->center = center;
 	this->tankDirection = glm::vec3(0, 0, 1);
 	this->turretDirection = glm::vec3(0, 0, 1);
@@ -24,6 +24,7 @@ Tank::~Tank() = default;
 void Tank::moveForward(const float deltaTimeSeconds) {
 	const glm::vec3 forward = glm::normalize(tankDirection);
 	center += forward * HW2_TANK_SPEED * deltaTimeSeconds;
+	hitBoxCenter = center;
 
 	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), forward * HW2_TANK_SPEED * deltaTimeSeconds);
 	for (auto& info : renderInfo) {
@@ -34,6 +35,7 @@ void Tank::moveForward(const float deltaTimeSeconds) {
 void Tank::moveBackward(const float deltaTimeSeconds) {
 	const glm::vec3 forward = glm::normalize(tankDirection);
 	center -= forward * HW2_TANK_SPEED * deltaTimeSeconds;
+	hitBoxCenter = center;
 
 	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), -forward * HW2_TANK_SPEED * deltaTimeSeconds);
 	for (auto& info : renderInfo) {
@@ -84,6 +86,17 @@ void Tank::rotateTurretRight(const float deltaTimeSeconds) {
 void Tank::update(float deltaTimeSeconds) {
 	if (shotTimer < HW2_SHOT_COOLDOWN) {
 		shotTimer += deltaTimeSeconds;
+	}
+}
+
+void Tank::getPushed(const glm::vec3& direction) {
+	center -= direction;
+	hitBoxCenter = center;
+
+	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), -direction);
+
+	for (auto& info : renderInfo) {
+		info.model_matrix = translationMatrix * info.model_matrix;
 	}
 }
 

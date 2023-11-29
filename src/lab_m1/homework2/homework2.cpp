@@ -28,6 +28,7 @@ void m1::Homework2::FrameStart() {
 
 void m1::Homework2::Update(float deltaTimeSeconds) {
 	UpdateEntities(deltaTimeSeconds);
+	CheckCollisions(deltaTimeSeconds);
 	RenderEntities();
 }
 
@@ -115,6 +116,38 @@ void m1::Homework2::UpdateEntities(float deltaTimeSeconds) {
 	missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
 		return missile.travel(deltaTimeSeconds);
 		}), missiles.end());
+}
+
+void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
+
+	// PlayerTank - Borders
+	std::for_each(borders.begin(), borders.end(), [&](Border& border) {
+		const auto result = playerTank.checkCollision(border);
+		if (result.has_value()) {
+			playerTank.getPushed(result.value());
+			camera.Move(glm::length(result.value()), -(result.value()));
+		}
+		});
+
+	// PlayerTank - Houses
+	std::for_each(houses.begin(), houses.end(), [&](House& house) {
+		const auto result = playerTank.checkCollision(house);
+		if (result.has_value()) {
+			playerTank.getPushed(result.value());
+			camera.Move(glm::length(result.value()), -(result.value()));
+		}
+		});
+
+	// Missile - Houses
+	missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
+		if (houses.empty())
+			return false;
+		return std::any_of(houses.begin(), houses.end(), [&](House& house) {
+			const auto result = missile.checkCollision(house);
+			return result.has_value();
+			});
+		}), missiles.end());
+
 }
 
 void m1::Homework2::RenderObject(Entity& entity) {
@@ -219,5 +252,13 @@ void m1::Homework2::CreateEntities() {
 			houses.emplace_back(glm::vec2(x, z), glm::vec3(scaleX, scaleY, scaleZ));
 			i++;
 		}
+	}
+
+	// Create Invisible Borders
+	{
+		/*borders.emplace_back(glm::vec3(0, 0, HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2), HW2_PLANE_LENGTH, HW2_BOUNDRY);
+		borders.emplace_back(glm::vec3(0, 0, -(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2)), HW2_PLANE_LENGTH, HW2_BOUNDRY);
+		borders.emplace_back(glm::vec3(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2, 0, 0), HW2_BOUNDRY, HW2_PLANE_LENGTH);
+		borders.emplace_back(glm::vec3(-(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2), 0, 0), HW2_BOUNDRY, HW2_PLANE_LENGTH);*/
 	}
 }

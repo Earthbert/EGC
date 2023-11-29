@@ -3,7 +3,8 @@
 #include "lab_m1/homework2/colors.h"
 #include "lab_m1/homework2/consts.h"
 
-House::House(glm::vec2 position, glm::vec3 scaleValues) {
+House::House(glm::vec2 position, glm::vec3 scaleValues)
+	: Collidable(glm::vec3(position.x, 0, position.y), scaleValues.x, scaleValues.z) {
 	const glm::vec3 center = glm::vec3(position.x, 0.5 * scaleValues.y, position.y);
 
 	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), center);

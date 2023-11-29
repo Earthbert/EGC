@@ -1,7 +1,8 @@
 #pragma once
+#include "collidable.h"
 #include "entity.h"
 
-class Missile : public Entity {
+class Missile : public Entity, public Collidable {
 public:
 	Missile(glm::vec3 initalPosition, glm::vec3 direction);
 	~Missile();

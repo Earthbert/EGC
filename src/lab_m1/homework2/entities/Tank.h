@@ -1,10 +1,11 @@
 #pragma once
 #include <optional>
 
+#include "collidable.h"
 #include "entity.h"
 #include "missile.h"
 
-class Tank : public Entity {
+class Tank : public Entity, public Collidable {
 public:
 	Tank(glm::vec3 center);
 	Tank();
@@ -19,6 +20,8 @@ public:
 	void rotateTurretRight(float deltaTimeSeconds);
 
 	void update(float deltaTimeSeconds);
+
+	void getPushed(const glm::vec3& direction);
 
 	std::optional<Missile> shoot();
 
