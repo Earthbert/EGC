@@ -81,6 +81,22 @@ void Tank::rotateTurretRight(const float deltaTimeSeconds) {
 	}
 }
 
+void Tank::update(float deltaTimeSeconds) {
+	if (shotTimer < shotCooldown) {
+		shotTimer += deltaTimeSeconds;
+	}
+}
+
+std::optional<Missile> Tank::shoot() {
+	if (shotTimer >= shotCooldown) {
+		shotTimer = 0;
+		glm::vec3 missilePosition = center + glm::normalize(turretDirection) * HW2_CANNON_LENGTH;
+		missilePosition.y = HW2_CANNON_HEIGHT;
+		return Missile(missilePosition, turretDirection);
+	}
+	return {};
+}
+
 glm::vec3 Tank::getCenter() const {
 	return center;
 }

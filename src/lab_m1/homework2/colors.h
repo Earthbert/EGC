@@ -20,3 +20,4 @@
 #define RGB_MILITARY_GREY glm::vec3(0.25, 0.25, 0.25)
 #define RGB_GRASS_GREEN glm::vec3(0.25, 0.5, 0.25)
 #define RGB_MILITARY_BROWN glm::vec3(0.5, 0.25, 0.25)
+#define RGB_SKY_BLUE glm::vec3(0.5, 0.5, 1)

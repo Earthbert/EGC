@@ -11,3 +11,5 @@
 // Distances
 #define HW2_TANK_RADIUS 2.0f
 #define HW2_CANNON_HEIGHT 1.63f
+#define HW2_CANNON_LENGTH 1.75f
+#define HW2_PLANE_LENGTH 150.0f

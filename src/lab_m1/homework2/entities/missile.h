@@ -3,13 +3,14 @@
 
 class Missile : public Entity {
 public:
-	Missile(glm::vec3 direction);
+	Missile(glm::vec3 initalPosition, glm::vec3 direction);
 	~Missile();
 
-	bool move(float deltaTime);
+	bool travel(float deltaTime);
 private:
-	float speed = 0.5f;
+	glm::vec3 position;
 	glm::vec3 direction;
+	float speed = 10.0f;
 	float distanceLeft = 100.0f;
 
 };

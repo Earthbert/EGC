@@ -6,6 +6,10 @@
 #include "entities/ground.h"
 #include "entities/playerTank.h"
 #include "entities/tank.h"
+#include "lab_m1/homework1/entities.h"
+
+class House;
+class EnemyTank;
 
 namespace m1
 {
@@ -30,6 +34,9 @@ namespace m1
 		void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 		void OnWindowResize(int width, int height) override;
 
+		void RenderEntities();
+		void UpdateEntities(float deltaTimeSeconds);
+
 		void RenderObject(Entity &entity);
 		void RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color);
 		void CreateShaders();
@@ -42,8 +49,11 @@ namespace m1
 
 		// Static Entities
 		Ground ground;
+		//std::vector<House> buildings;
 		// Dynamic Entities
 		PlayerTank playerTank;
+		//std::vector<EnemyTank> enemyTanks;
+		std::vector<Missile> missiles;
 	protected:
 		RandomNum generator;
 	};

@@ -19,7 +19,7 @@ void m1::Homework2::Init() {
 }
 
 void m1::Homework2::FrameStart() {
-	glClearColor(RGB_GRAY.x, RGB_GRAY.y, RGB_GRAY.z, 1);
+	glClearColor(RGB_SKY_BLUE.x, RGB_SKY_BLUE.y, RGB_SKY_BLUE.z, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::ivec2 resolution = window->GetResolution();
@@ -27,9 +27,8 @@ void m1::Homework2::FrameStart() {
 }
 
 void m1::Homework2::Update(float deltaTimeSeconds) {
-	RenderObject(ground);
-	RenderObject(playerTank);
-	DrawCoordinateSystem(camera.GetViewMatrix(), projectionMatrix);
+	UpdateEntities(deltaTimeSeconds);
+	RenderEntities();
 }
 
 void m1::Homework2::FrameEnd() {}
@@ -82,13 +81,37 @@ void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) 
 	}
 }
 
-void m1::Homework2::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {}
+void m1::Homework2::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
+	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
+		auto missile = playerTank.shoot();
+		if (missile.has_value()) {
+			missiles.push_back(missile.value());
+		}
+	}
+}
 
 void m1::Homework2::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) {}
 
 void m1::Homework2::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) {}
 
 void m1::Homework2::OnWindowResize(int width, int height) { SimpleScene::OnWindowResize(width, height); }
+
+void m1::Homework2::RenderEntities() {
+	RenderObject(ground);
+	RenderObject(playerTank);
+
+	std::for_each(missiles.begin(), missiles.end(), [&](Missile& missile) {
+		RenderObject(missile);
+		});
+}
+
+void m1::Homework2::UpdateEntities(float deltaTimeSeconds) {
+	playerTank.update(deltaTimeSeconds);
+
+	missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
+		return missile.travel(deltaTimeSeconds);
+		}), missiles.end());
+}
 
 void m1::Homework2::RenderObject(Entity& entity) {
 	for (auto& renderInfo : entity.getRenderInfo()) {

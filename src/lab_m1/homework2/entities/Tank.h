@@ -18,7 +18,9 @@ public:
 	void rotateTurretLeft(float deltaTimeSeconds);
 	void rotateTurretRight(float deltaTimeSeconds);
 
-	std::optional<Missile> shoot(float deltaTimeSeconds);
+	void update(float deltaTimeSeconds);
+
+	std::optional<Missile> shoot();
 
 	glm::vec3 getCenter() const;
 
@@ -30,7 +32,10 @@ protected:
 	glm::vec3 tankDirection;
 	glm::vec3 turretDirection;
 
-	float tankSpeed = 5.0f;
-	float tankAngularSpeed = 2.0f;
+	float tankSpeed = 6.0f;
+	float tankAngularSpeed = 1.5f;
 	float turretAngularSpeed = 2.0f;
+
+	float shotTimer  = 0;
+	float shotCooldown = 2.0f;
 };
