@@ -23,9 +23,9 @@ Tank::~Tank() = default;
 
 void Tank::moveForward(const float deltaTimeSeconds) {
 	const glm::vec3 forward = glm::normalize(tankDirection);
-	center += forward * tankSpeed * deltaTimeSeconds;
+	center += forward * HW2_TANK_SPEED * deltaTimeSeconds;
 
-	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), forward * tankSpeed * deltaTimeSeconds);
+	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), forward * HW2_TANK_SPEED * deltaTimeSeconds);
 	for (auto& info : renderInfo) {
 		info.model_matrix = translationMatrix * info.model_matrix;
 	}
@@ -33,16 +33,16 @@ void Tank::moveForward(const float deltaTimeSeconds) {
 
 void Tank::moveBackward(const float deltaTimeSeconds) {
 	const glm::vec3 forward = glm::normalize(tankDirection);
-	center -= forward * tankSpeed * deltaTimeSeconds;
+	center -= forward * HW2_TANK_SPEED * deltaTimeSeconds;
 
-	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), -forward * tankSpeed * deltaTimeSeconds);
+	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), -forward * HW2_TANK_SPEED * deltaTimeSeconds);
 	for (auto& info : renderInfo) {
 		info.model_matrix = translationMatrix * info.model_matrix;
 	}
 }
 
 void Tank::rotateLeft(const float deltaTimeSeconds) {
-	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), tankAngularSpeed * deltaTimeSeconds, glm::vec3(0, 1, 0));
+	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), HW2_TANK_ANGULAR_SPEED * deltaTimeSeconds, glm::vec3(0, 1, 0));
 
 	tankDirection = glm::vec3(rotationMatrix * glm::vec4(tankDirection, 1));
 	turretDirection = glm::vec3(rotationMatrix * glm::vec4(turretDirection, 1));
@@ -53,7 +53,7 @@ void Tank::rotateLeft(const float deltaTimeSeconds) {
 }
 
 void Tank::rotateRight(const float deltaTimeSeconds) {
-	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), -(tankAngularSpeed * deltaTimeSeconds), glm::vec3(0, 1, 0));
+	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), -(HW2_TANK_ANGULAR_SPEED * deltaTimeSeconds), glm::vec3(0, 1, 0));
 
 	tankDirection = glm::vec3(rotationMatrix * glm::vec4(tankDirection, 1));
 	turretDirection = glm::vec3(rotationMatrix * glm::vec4(turretDirection, 1));
@@ -63,7 +63,7 @@ void Tank::rotateRight(const float deltaTimeSeconds) {
 	}
 }
 void Tank::rotateTurretLeft(const float deltaTimeSeconds) {
-	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), turretAngularSpeed * deltaTimeSeconds, glm::vec3(0, 1, 0));
+	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), HW2_TURRET_ANGULAR_SPEED * deltaTimeSeconds, glm::vec3(0, 1, 0));
 
 	turretDirection = glm::vec3(rotationMatrix * glm::vec4(turretDirection, 1));
 
@@ -72,7 +72,7 @@ void Tank::rotateTurretLeft(const float deltaTimeSeconds) {
 	}
 }
 void Tank::rotateTurretRight(const float deltaTimeSeconds) {
-	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), -(turretAngularSpeed * deltaTimeSeconds), glm::vec3(0, 1, 0));
+	const glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), -(HW2_TURRET_ANGULAR_SPEED * deltaTimeSeconds), glm::vec3(0, 1, 0));
 
 	turretDirection = glm::vec3(rotationMatrix * glm::vec4(turretDirection, 1));
 
@@ -82,13 +82,13 @@ void Tank::rotateTurretRight(const float deltaTimeSeconds) {
 }
 
 void Tank::update(float deltaTimeSeconds) {
-	if (shotTimer < shotCooldown) {
+	if (shotTimer < HW2_SHOT_COOLDOWN) {
 		shotTimer += deltaTimeSeconds;
 	}
 }
 
 std::optional<Missile> Tank::shoot() {
-	if (shotTimer >= shotCooldown) {
+	if (shotTimer >= HW2_SHOT_COOLDOWN) {
 		shotTimer = 0;
 		glm::vec3 missilePosition = center + glm::normalize(turretDirection) * HW2_CANNON_LENGTH;
 		missilePosition.y = HW2_CANNON_HEIGHT;
@@ -99,14 +99,6 @@ std::optional<Missile> Tank::shoot() {
 
 glm::vec3 Tank::getCenter() const {
 	return center;
-}
-
-float Tank::getTankSpeed() const {
-	return tankSpeed;
-}
-
-float Tank::getTankAngularSpeed() const {
-	return tankAngularSpeed;
 }
 
 glm::vec3 Tank::getTankDirection() const {

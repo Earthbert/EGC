@@ -13,7 +13,7 @@ public:
 		return distribution(randomEngine);
 	}
 
-	double getRandomDouble(double min, double max) {
+	float getRandomFloat(float min, float max) {
 		std::uniform_real_distribution distribution(min, max);
 		return distribution(randomEngine);
 	}

@@ -7,9 +7,20 @@
 #define HW2_TURRET_MESH "turret_mesh"
 #define HW2_CANNON_MESH "cannon_mesh"
 #define HW2_BALL_MESH "ball_mesh"
-#define HW2_BUILDING_MESH "building_mesh"
+#define HW2_HOUSE_MESH "building_mesh"
 // Distances
 #define HW2_TANK_RADIUS 2.0f
 #define HW2_CANNON_HEIGHT 1.63f
 #define HW2_CANNON_LENGTH 1.75f
 #define HW2_PLANE_LENGTH 150.0f
+// Speeds
+#define HW2_TANK_SPEED 6.0f
+#define HW2_TANK_ANGULAR_SPEED 1.5f
+#define HW2_TURRET_ANGULAR_SPEED 2.0f
+// Time intervals
+#define HW2_SHOT_COOLDOWN 2.0f
+// House Values
+#define HW2_MIN_HOUSES 10
+#define HW2_MAX_HOUSES 30
+#define HW2_MIN_HOUSE_SCALE 5.0f
+#define HW2_MAX_HOUSE_SCALE 20.0f

@@ -4,12 +4,10 @@
 #include "random_num.h"
 #include "components/simple_scene.h"
 #include "entities/ground.h"
+#include "entities/house.h"
 #include "entities/playerTank.h"
 #include "entities/tank.h"
 #include "lab_m1/homework1/entities.h"
-
-class House;
-class EnemyTank;
 
 namespace m1
 {
@@ -49,7 +47,7 @@ namespace m1
 
 		// Static Entities
 		Ground ground;
-		//std::vector<House> buildings;
+		std::vector<House> houses;
 		// Dynamic Entities
 		PlayerTank playerTank;
 		//std::vector<EnemyTank> enemyTanks;

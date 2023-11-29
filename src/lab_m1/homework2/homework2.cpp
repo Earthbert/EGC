@@ -37,22 +37,22 @@ void m1::Homework2::OnInputUpdate(float deltaTime, int mods) {
 	// Tank movement
 	if (window->KeyHold(GLFW_KEY_W)) {
 		playerTank.moveForward(deltaTime);
-		camera.Move(deltaTime * this->playerTank.getTankSpeed(), this->playerTank.getTankDirection());
+		camera.Move(deltaTime * HW2_TANK_SPEED, this->playerTank.getTankDirection());
 	}
 
 	if (window->KeyHold(GLFW_KEY_A)) {
 		playerTank.rotateLeft(deltaTime);
-		camera.RotateThirdPerson_OY(deltaTime * this->playerTank.getTankAngularSpeed());
+		camera.RotateThirdPerson_OY(deltaTime * HW2_TANK_ANGULAR_SPEED);
 	}
 
 	if (window->KeyHold(GLFW_KEY_S)) {
 		playerTank.moveBackward(deltaTime);
-		camera.Move(-deltaTime * this->playerTank.getTankSpeed(), this->playerTank.getTankDirection());
+		camera.Move(-deltaTime * HW2_TANK_SPEED, this->playerTank.getTankDirection());
 	}
 
 	if (window->KeyHold(GLFW_KEY_D)) {
 		playerTank.rotateRight(deltaTime);
-		camera.RotateThirdPerson_OY(-deltaTime * this->playerTank.getTankAngularSpeed());
+		camera.RotateThirdPerson_OY(-deltaTime * HW2_TANK_ANGULAR_SPEED);
 	}
 	// Zoom in/out
 	if (window->KeyHold(GLFW_KEY_E)) {
@@ -102,6 +102,10 @@ void m1::Homework2::RenderEntities() {
 
 	std::for_each(missiles.begin(), missiles.end(), [&](Missile& missile) {
 		RenderObject(missile);
+		});
+
+	for_each(houses.begin(), houses.end(), [&](House& house) {
+		RenderObject(house);
 		});
 }
 
@@ -187,7 +191,7 @@ void m1::Homework2::CreateMeshes() {
 		meshes[mesh->GetMeshID()] = mesh;
 	}
 	{
-		Mesh* mesh = new Mesh(HW2_BUILDING_MESH);
+		Mesh* mesh = new Mesh(HW2_HOUSE_MESH);
 		mesh->LoadMesh(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::MODELS, "homework2"), "box.obj");
 		meshes[mesh->GetMeshID()] = mesh;
 	}
@@ -196,4 +200,24 @@ void m1::Homework2::CreateMeshes() {
 void m1::Homework2::CreateEntities() {
 	ground = Ground();
 	playerTank = PlayerTank(glm::vec4(0));
+
+	// Create Houses
+	{
+		const int numHouses = generator.getRandomInt(HW2_MIN_HOUSES, HW2_MAX_HOUSES);
+
+		for (int i = 0; i < numHouses;) {
+			const float x = generator.getRandomFloat(-(HW2_PLANE_LENGTH / 2) + HW2_MAX_HOUSE_SCALE, (HW2_PLANE_LENGTH / 2) - HW2_MAX_HOUSE_SCALE);
+			const float z = generator.getRandomFloat(-(HW2_PLANE_LENGTH / 2) + HW2_MAX_HOUSE_SCALE, (HW2_PLANE_LENGTH / 2) - HW2_MAX_HOUSE_SCALE);
+
+			const float scaleX = generator.getRandomFloat(HW2_MIN_HOUSE_SCALE, HW2_MAX_HOUSE_SCALE);
+			const float scaleY = generator.getRandomFloat(HW2_MIN_HOUSE_SCALE, HW2_MAX_HOUSE_SCALE);
+			const float scaleZ = generator.getRandomFloat(HW2_MIN_HOUSE_SCALE, HW2_MAX_HOUSE_SCALE);
+
+			if (abs(x) < HW2_MAX_HOUSE_SCALE && abs(z) < HW2_MAX_HOUSE_SCALE)
+				continue;
+
+			houses.emplace_back(glm::vec2(x, z), glm::vec3(scaleX, scaleY, scaleZ));
+			i++;
+		}
+	}
 }
