@@ -246,9 +246,6 @@ void m1::Homework2::CreateEntities() {
 			const float scaleY = generator.getRandomFloat(HW2_MIN_HOUSE_SCALE, HW2_MAX_HOUSE_SCALE);
 			const float scaleZ = generator.getRandomFloat(HW2_MIN_HOUSE_SCALE, HW2_MAX_HOUSE_SCALE);
 
-			if (abs(x) < HW2_MAX_HOUSE_SCALE && abs(z) < HW2_MAX_HOUSE_SCALE)
-				continue;
-
 			houses.emplace_back(glm::vec2(x, z), glm::vec3(scaleX, scaleY, scaleZ));
 			i++;
 		}

@@ -2,6 +2,8 @@
 
 #include <optional>
 
+#include "lab_m1/homework2/consts.h"
+
 Collidable::Collidable(glm::vec3 hitBoxCenter, float radius) {
 	this->type = CIRCLE_COLLISION;
 	this->hitBoxCenter = hitBoxCenter;
@@ -39,10 +41,14 @@ std::optional<glm::vec3> Collidable::checkCicleSquareCollision(const Collidable&
 	closestPoint.z = glm::clamp(hitBoxCenter.z, other.hitBoxCenter.z - other.width / 2, other.hitBoxCenter.z + other.width / 2);
 
 	const glm::vec3 collisionVector = closestPoint - glm::vec3(hitBoxCenter.x, 0, hitBoxCenter.z);
-	
+
 	const float distance = glm::length(collisionVector);
 
 	if (distance < radius) {
+		if (distance == 0.0f) {
+			return glm::vec3(radius, 0, 0);
+		}
+
 		const float moveDistance = radius - distance;
 		glm::vec3 moveVector = glm::normalize(collisionVector) * moveDistance;
 		return moveVector;
