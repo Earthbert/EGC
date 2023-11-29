@@ -42,6 +42,7 @@ namespace m1
 		void CreateShaders();
 		void CreateMeshes();
 		void CreateEntities();
+		void RenderMinimap();
 
 		// Camera
 		glm::mat4 projectionMatrix;
@@ -55,6 +56,11 @@ namespace m1
 		PlayerTank playerTank;
 		//std::vector<EnemyTank> enemyTanks;
 		std::vector<Missile> missiles;
+
+		// Minimap
+		bool renderMinimap;
+		glm::mat4 minimapViewMatrix;
+		glm::mat4 minimapProjectionMatrix;
 	protected:
 		RandomNum generator;
 	};

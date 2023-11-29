@@ -13,6 +13,9 @@ void m1::Homework2::Init() {
 	projectionMatrix = glm::perspective(RADIANS(100), window->props.aspectRatio, 0.01f, 200.0f);
 	camera = HW2_Camera();
 
+	minimapViewMatrix = glm::lookAt(glm::vec3(0, 50, 0), glm::vec3(0, 0, 0), glm::vec3(0,0, -1));
+	minimapProjectionMatrix = glm::ortho(-HW2_PLANE_LENGTH / 2, HW2_PLANE_LENGTH / 2, -HW2_PLANE_LENGTH / 2, HW2_PLANE_LENGTH / 2, 0.01f, 200.0f);
+
 	CreateShaders();
 	CreateMeshes();
 	CreateEntities();
@@ -22,7 +25,7 @@ void m1::Homework2::FrameStart() {
 	glClearColor(RGB_SKY_BLUE.x, RGB_SKY_BLUE.y, RGB_SKY_BLUE.z, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::ivec2 resolution = window->GetResolution();
+	const glm::ivec2 resolution = window->GetResolution();
 	glViewport(0, 0, resolution.x, resolution.y);
 }
 
@@ -30,6 +33,7 @@ void m1::Homework2::Update(float deltaTimeSeconds) {
 	UpdateEntities(deltaTimeSeconds);
 	CheckCollisions(deltaTimeSeconds);
 	RenderEntities();
+	RenderMinimap();
 }
 
 void m1::Homework2::FrameEnd() {}
@@ -171,12 +175,21 @@ void m1::Homework2::RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMat
 	location = glGetUniformLocation(shader->program, "model_matrix");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-	glm::mat4 viewMatrix = camera.GetViewMatrix();
+	glm::mat4 viewMatrix;
+	if (renderMinimap)
+		viewMatrix = minimapViewMatrix;
+	else
+		viewMatrix = camera.GetViewMatrix();
 	location = glGetUniformLocation(shader->program, "view_matrix");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
+	glm::mat4 projectMatrix;
+	if (renderMinimap)
+		projectMatrix = minimapProjectionMatrix;
+	else
+		projectMatrix = projectionMatrix;
 	location = glGetUniformLocation(shader->program, "projection_matrix");
-	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(projectMatrix));
 
 	glBindVertexArray(mesh->GetBuffers()->m_VAO);
 	glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_INT, 0);
@@ -253,9 +266,24 @@ void m1::Homework2::CreateEntities() {
 
 	// Create Invisible Borders
 	{
-		/*borders.emplace_back(glm::vec3(0, 0, HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2), HW2_PLANE_LENGTH, HW2_BOUNDRY);
+		borders.emplace_back(glm::vec3(0, 0, HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2), HW2_PLANE_LENGTH, HW2_BOUNDRY);
 		borders.emplace_back(glm::vec3(0, 0, -(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2)), HW2_PLANE_LENGTH, HW2_BOUNDRY);
 		borders.emplace_back(glm::vec3(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2, 0, 0), HW2_BOUNDRY, HW2_PLANE_LENGTH);
-		borders.emplace_back(glm::vec3(-(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2), 0, 0), HW2_BOUNDRY, HW2_PLANE_LENGTH);*/
+		borders.emplace_back(glm::vec3(-(HW2_PLANE_LENGTH / 2 + HW2_BOUNDRY / 2), 0, 0), HW2_BOUNDRY, HW2_PLANE_LENGTH);
 	}
+}
+
+void m1::Homework2::RenderMinimap() {
+	renderMinimap = true;
+
+	const auto resolution = window->GetResolution();
+	const int minimapLenght = glm::min(resolution.x, resolution.y) / HW2_MINIMAP_PROPORTION;
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glViewport(HW2_MINIMAP_BORDER, resolution.y - HW2_MINIMAP_BORDER - minimapLenght,
+		minimapLenght, minimapLenght);
+
+	RenderEntities();
+
+	renderMinimap = false;
 }

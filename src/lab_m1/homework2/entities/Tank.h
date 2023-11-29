@@ -19,7 +19,7 @@ public:
 	void rotateTurretLeft(float deltaTimeSeconds);
 	void rotateTurretRight(float deltaTimeSeconds);
 
-	void update(float deltaTimeSeconds);
+	virtual void update(float deltaTimeSeconds);
 
 	void getPushed(const glm::vec3& direction);
 
