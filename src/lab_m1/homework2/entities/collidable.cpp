@@ -56,7 +56,7 @@ std::optional<glm::vec3> Collidable::checkCicleSquareCollision(const Collidable&
 	return {};
 }
 
-glm::vec3 Collidable::checkCircleCicleCollision(const Collidable& other) const {
+std::optional<glm::vec3> Collidable::checkCircleCicleCollision(const Collidable& other) const {
 	const float distance = glm::length(this->hitBoxCenter - other.hitBoxCenter);
 	const glm::vec3 difference = this->hitBoxCenter - other.hitBoxCenter;
 

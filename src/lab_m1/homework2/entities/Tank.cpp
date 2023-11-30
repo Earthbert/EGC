@@ -100,6 +100,16 @@ void Tank::getPushed(const glm::vec3& direction) {
 	}
 }
 
+std::optional<Explosion> Tank::takeDamage() {
+	health--;
+	if (health < 0) {
+		this->radius = 0;
+		renderInfo.erase(renderInfo.begin(), renderInfo.end());
+		return Explosion(this->center, 4 * HW2_TANK_RADIUS);	
+	}
+	return {};
+}
+
 std::optional<Missile> Tank::shoot() {
 	if (shotTimer >= HW2_SHOT_COOLDOWN) {
 		shotTimer = 0;

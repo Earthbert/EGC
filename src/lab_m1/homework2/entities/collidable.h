@@ -21,7 +21,7 @@ public:
 
 protected:
 	std::optional<glm::vec3> checkCicleSquareCollision(const Collidable& other) const;
-	glm::vec3 checkCircleCicleCollision(const Collidable& other) const;
+	std::optional<glm::vec3> checkCircleCicleCollision(const Collidable& other) const;
 
 	CollisionType type;
 	glm::vec3 hitBoxCenter;

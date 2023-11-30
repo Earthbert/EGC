@@ -4,6 +4,7 @@
 #include "collidable.h"
 #include "entity.h"
 #include "missile.h"
+#include "explosion.h"
 
 class Tank : public Entity, public Collidable {
 public:
@@ -23,6 +24,8 @@ public:
 
 	void getPushed(const glm::vec3& direction);
 
+	std::optional<Explosion> takeDamage();
+
 	std::optional<Missile> shoot();
 
 	glm::vec3 getCenter() const;
@@ -32,6 +35,8 @@ protected:
 	glm::vec3 center;
 	glm::vec3 tankDirection;
 	glm::vec3 turretDirection;
+
+	int health = 3;
 
 	float shotTimer  = 0;
 };

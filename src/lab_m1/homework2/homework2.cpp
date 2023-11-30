@@ -1,5 +1,7 @@
 #include "homework2.h"
 
+#include <iostream>
+
 #include "colors.h"
 #include "consts.h"
 #include "entities/entity.h"
@@ -13,7 +15,7 @@ void m1::Homework2::Init() {
 	projectionMatrix = glm::perspective(RADIANS(100), window->props.aspectRatio, 0.01f, 200.0f);
 	camera = HW2_Camera();
 
-	minimapViewMatrix = glm::lookAt(glm::vec3(0, 50, 0), glm::vec3(0, 0, 0), glm::vec3(0,0, -1));
+	minimapViewMatrix = glm::lookAt(glm::vec3(0, 50, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
 	minimapProjectionMatrix = glm::ortho(-HW2_PLANE_LENGTH / 2, HW2_PLANE_LENGTH / 2, -HW2_PLANE_LENGTH / 2, HW2_PLANE_LENGTH / 2, 0.01f, 200.0f);
 
 	CreateShaders();
@@ -30,6 +32,19 @@ void m1::Homework2::FrameStart() {
 }
 
 void m1::Homework2::Update(float deltaTimeSeconds) {
+	if (gameOver) {
+		if (explosions.empty()) {
+			std::cout << "GAME OVER" << std::endl;
+			Exit();
+		}
+		else {
+			explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
+				return explosion.update(deltaTimeSeconds);
+				}), explosions.end());
+		}
+		RenderEntities();
+		return;
+	}
 	UpdateEntities(deltaTimeSeconds);
 	CheckCollisions(deltaTimeSeconds);
 	RenderEntities();
@@ -39,6 +54,9 @@ void m1::Homework2::Update(float deltaTimeSeconds) {
 void m1::Homework2::FrameEnd() {}
 
 void m1::Homework2::OnInputUpdate(float deltaTime, int mods) {
+	if (gameOver)
+		return;
+
 	// Tank movement
 	if (window->KeyHold(GLFW_KEY_W)) {
 		playerTank.moveForward(deltaTime);
@@ -73,6 +91,9 @@ void m1::Homework2::OnKeyPress(int key, int mods) {}
 void m1::Homework2::OnKeyRelease(int key, int mods) {}
 
 void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) {
+	if (gameOver)
+		return;
+
 	if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
 		constexpr float sensivity = 0.001f;
 		camera.RotateThirdPerson_OX(sensivity * static_cast<float>(-deltaY));
@@ -87,6 +108,9 @@ void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) 
 }
 
 void m1::Homework2::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
+	if (gameOver)
+		return;
+
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
 		auto missile = playerTank.shoot();
 		if (missile.has_value()) {
@@ -109,8 +133,12 @@ void m1::Homework2::RenderEntities() {
 		RenderObject(missile);
 		});
 
-	for_each(houses.begin(), houses.end(), [&](House& house) {
+	std::for_each(houses.begin(), houses.end(), [&](House& house) {
 		RenderObject(house);
+		});
+
+	std::for_each(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
+		RenderObject(explosion);
 		});
 }
 
@@ -152,7 +180,23 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 			});
 		}), missiles.end());
 
+	// PlayerTank - Missiles
+	missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
+		const auto result = playerTank.checkCollision(missile);
+		if (result.has_value()) {
+			auto hitResult = playerTank.takeDamage();
+			if (hitResult.has_value()) {
+				explosions.emplace_back(hitResult.value());
+				gameOver = true;
+			}
+			return true;
+		}
+		return false;
+		}), missiles.end());
+
 }
+
+void m1::Homework2::CreateEnemies() {}
 
 void m1::Homework2::RenderObject(Entity& entity) {
 	for (auto& renderInfo : entity.getRenderInfo()) {

@@ -4,6 +4,7 @@
 #include "random_num.h"
 #include "components/simple_scene.h"
 #include "entities/border.h"
+#include "entities/enemyTank.h"
 #include "entities/ground.h"
 #include "entities/house.h"
 #include "entities/playerTank.h"
@@ -37,6 +38,7 @@ namespace m1
 		void UpdateEntities(float deltaTimeSeconds);
 		void CheckCollisions(float deltaTimeSeconds);
 
+		void CreateEnemies();
 		void RenderObject(Entity &entity);
 		void RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color);
 		void CreateShaders();
@@ -54,8 +56,12 @@ namespace m1
 		std::vector<Border> borders;
 		// Dynamic Entities
 		PlayerTank playerTank;
-		//std::vector<EnemyTank> enemyTanks;
+		std::vector<EnemyTank> enemyTanks;
 		std::vector<Missile> missiles;
+		std::vector<Explosion> explosions;
+
+		// Game logic
+		bool gameOver = false;
 
 		// Minimap
 		bool renderMinimap;
