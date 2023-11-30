@@ -23,7 +23,7 @@
 #define HW2_TURRET_ANGULAR_SPEED 2.0f
 // Time intervals
 #define HW2_SHOT_COOLDOWN 1.0f
-#define HW2_SPAWN_ENEMY_COOLDOWN 5.0f
+#define HW2_SPAWN_ENEMY_COOLDOWN 3.0f
 #define HW2_GAME_OVER_TIME 60.0f
 // House Values
 #define HW2_MIN_HOUSES 10

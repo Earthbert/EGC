@@ -77,7 +77,7 @@ namespace m1
 		bool renderMinimap;
 		glm::mat4 minimapViewMatrix;
 		glm::mat4 minimapProjectionMatrix;
-	protected:
+	
 		RandomNum generator;
 	};
 }   // namespace m1

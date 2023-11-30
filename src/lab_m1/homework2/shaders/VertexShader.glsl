@@ -19,6 +19,11 @@ void main()
     if (health == -1)
         gl_Position = projection_matrix * view_matrix * model_matrix * vec4(v_position, 1.0);
     else {
-        gl_Position = projection_matrix * view_matrix * model_matrix * vec4(v_position, 1.0);
+        vec3 deformation_vector = v_position - vec3(0.0, 0.0, 0.0);
+        deformation_vector = normalize(deformation_vector);
+        deformation_vector = deformation_vector * 0.1 * (3 - health);
+        vec3 new_position = v_position - deformation_vector;
+
+        gl_Position = projection_matrix * view_matrix * model_matrix * vec4(new_position, 1.0);
     }
 }
