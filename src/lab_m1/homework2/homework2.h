@@ -5,6 +5,10 @@
 #include "components/simple_scene.h"
 #include "entities/border.h"
 #include "entities/enemyTank.h"
+#include "entities/Entity.h"
+#include "entities/Entity.h"
+#include "entities/Entity.h"
+#include "entities/Entity.h"
 #include "entities/ground.h"
 #include "entities/house.h"
 #include "entities/minimapBg.h"
@@ -41,7 +45,7 @@ namespace m1
 
 		void CreateEnemies(float deltaTimeSeconds);
 		void RenderObject(Entity &entity);
-		void RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color);
+		void RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color, const int health = -1);
 		void CreateShaders();
 		void CreateMeshes();
 		void CreateEntities();
@@ -62,9 +66,11 @@ namespace m1
 		std::vector<Explosion> explosions;
 
 		// Game logic
-		bool gameOver = false;
-		float gameOverTimer = 600.0f;
+		bool lostGame = false;
+		bool timeLimit = false;
+		float gameOverTimer = HW2_GAME_OVER_TIME;
 		float enemyTimer = 0.0f;
+		int score = 0;
 
 		// Minimap
 		MinimapBg minimapBg;

@@ -34,11 +34,17 @@ void m1::Homework2::FrameStart() {
 void m1::Homework2::Update(float deltaTimeSeconds) {
 	gameOverTimer -= deltaTimeSeconds;
 	if (gameOverTimer < 0) {
-		gameOver = true;
+		lostGame = true;
+		timeLimit = true;
 	};
-	if (gameOver) {
+	if (lostGame) {
 		if (explosions.empty()) {
-			std::cout << "GAME OVER" << std::endl;
+			std::cout << "------------GAME OVER------------" << std::endl;
+			if (timeLimit) {
+				std::cout << "Score: " << score << std::endl;
+			} else {
+				std::cout << "YOUR TANK GOT DESTROYED" << std::endl;
+			}
 			Exit();
 		} else {
 			explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
@@ -58,7 +64,7 @@ void m1::Homework2::Update(float deltaTimeSeconds) {
 void m1::Homework2::FrameEnd() {}
 
 void m1::Homework2::OnInputUpdate(float deltaTime, int mods) {
-	if (gameOver)
+	if (lostGame)
 		return;
 
 	// Tank movement
@@ -95,7 +101,7 @@ void m1::Homework2::OnKeyPress(int key, int mods) {}
 void m1::Homework2::OnKeyRelease(int key, int mods) {}
 
 void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) {
-	if (gameOver)
+	if (lostGame)
 		return;
 
 	if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
@@ -112,7 +118,7 @@ void m1::Homework2::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) 
 }
 
 void m1::Homework2::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) {
-	if (gameOver)
+	if (lostGame)
 		return;
 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
@@ -211,7 +217,7 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 			auto hitResult = playerTank.takeDamage();
 			if (hitResult.has_value()) {
 				explosions.emplace_back(hitResult.value());
-				gameOver = true;
+				lostGame = true;
 			}
 			return true;
 		}
@@ -271,6 +277,7 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 				auto hitResult = enemyTank.takeDamage();
 				if (hitResult.has_value()) {
 					explosions.emplace_back(hitResult.value());
+					score += 10;
 					died = true;
 				}
 				return true;
@@ -299,10 +306,14 @@ void m1::Homework2::RenderObject(Entity& entity) {
 	for (auto& renderInfo : entity.getRenderInfo()) {
 		if (renderInfo.shader_name == HW2_BASIC_SHADER)
 			RenderUsingBasicShader(meshes[renderInfo.mesh_name], renderInfo.model_matrix, renderInfo.color);
+		else if (renderInfo.shader_name == HW2_TANK_SHADER) {
+			const int health = dynamic_cast<Tank*>(&entity)->getHealth();
+			RenderUsingBasicShader(meshes[renderInfo.mesh_name], renderInfo.model_matrix, renderInfo.color, health);
+		}
 	}
 }
 
-void m1::Homework2::RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color) {
+void m1::Homework2::RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color, const int health) {
 	const Shader* shader = shaders[HW2_BASIC_SHADER];
 
 	if (!mesh || !shader || !shader->GetProgramID())
@@ -331,6 +342,9 @@ void m1::Homework2::RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMat
 		projectMatrix = projectionMatrix;
 	location = glGetUniformLocation(shader->program, "projection_matrix");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(projectMatrix));
+
+	location = glGetUniformLocation(shader->program, "health");
+	glUniform1i(location, health);
 
 	glBindVertexArray(mesh->GetBuffers()->m_VAO);
 	glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_INT, 0);

@@ -6,6 +6,10 @@
 
 EnemyTank::EnemyTank(PlayerTank& playerTank, glm::vec3 center) : Tank(center), playerTank(playerTank) {
 	renderInfo[1].color = RGB_DARK_RED;
+
+	std::for_each(renderInfo.begin(), renderInfo.end(), [](RenderInfo& info) {
+		info.shader_name = HW2_TANK_SHADER;
+		});
 }
 
 EnemyTank::~EnemyTank() = default;

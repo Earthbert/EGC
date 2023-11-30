@@ -1,5 +1,6 @@
 // Shaders
 #define HW2_BASIC_SHADER "basic_shader"
+#define HW2_TANK_SHADER "tank_shader"
 // Meshes
 #define HW2_GROUND_MESH "ground_mesh"
 #define HW2_TRACK_MESH "track_mesh"
@@ -21,8 +22,9 @@
 #define HW2_TANK_ANGULAR_SPEED 1.5f
 #define HW2_TURRET_ANGULAR_SPEED 2.0f
 // Time intervals
-#define HW2_SHOT_COOLDOWN 2.0f
-#define HW2_SPAWN_ENEMY_COOLDOWN 1.0f
+#define HW2_SHOT_COOLDOWN 1.0f
+#define HW2_SPAWN_ENEMY_COOLDOWN 5.0f
+#define HW2_GAME_OVER_TIME 60.0f
 // House Values
 #define HW2_MIN_HOUSES 10
 #define HW2_MAX_HOUSES 30
@@ -35,3 +37,5 @@
 #define HW2_IDLE_MAX_TIME 5.0f
 #define HW2_MOVE_MAX_TIME 4.0f
 #define HW2_ROTATE_MAX_TIME 2.0f
+// Bonuses:
+// Simple Minimap, Explosion, Zoom

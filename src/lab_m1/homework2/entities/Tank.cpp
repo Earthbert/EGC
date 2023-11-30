@@ -104,10 +104,10 @@ void Tank::getPushed(const glm::vec3& direction) {
 
 std::optional<Explosion> Tank::takeDamage() {
 	health--;
-	if (health < 0) {
+	if (health <= 0) {
 		this->radius = 0;
 		renderInfo.erase(renderInfo.begin(), renderInfo.end());
-		return Explosion(this->center, 4 * HW2_TANK_RADIUS);	
+		return Explosion(this->center, 4 * HW2_TANK_RADIUS);
 	}
 	return {};
 }
@@ -128,4 +128,8 @@ glm::vec3 Tank::getCenter() const {
 
 glm::vec3 Tank::getTankDirection() const {
 	return tankDirection;
+}
+
+int Tank::getHealth() const {
+	return health;
 }

@@ -31,6 +31,8 @@ public:
 	glm::vec3 getCenter() const;
 
 	glm::vec3 getTankDirection() const;
+
+	int getHealth() const;
 protected:
 	glm::vec3 center;
 	glm::vec3 tankDirection;
