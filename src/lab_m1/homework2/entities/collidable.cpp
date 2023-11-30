@@ -53,6 +53,17 @@ std::optional<glm::vec3> Collidable::checkCicleSquareCollision(const Collidable&
 		glm::vec3 moveVector = glm::normalize(collisionVector) * moveDistance;
 		return moveVector;
 	}
+
+	if (hitBoxCenter.x >= other.hitBoxCenter.x - other.length / 2 &&
+		hitBoxCenter.x <= other.hitBoxCenter.x + other.length / 2 &&
+		hitBoxCenter.z >= other.hitBoxCenter.z - other.width / 2 &&
+		hitBoxCenter.z <= other.hitBoxCenter.z + other.width / 2) {
+
+		const float moveDistance = glm::max(hitBoxCenter.x - (other.hitBoxCenter.x - other.length / 2), hitBoxCenter.z - (other.hitBoxCenter.z - other.width / 2));
+
+		glm::vec3 moveVector = glm::normalize(glm::vec3(hitBoxCenter.x - other.hitBoxCenter.x, 0, hitBoxCenter.z - other.hitBoxCenter.z)) * moveDistance;
+		return moveVector;
+	}
 	return {};
 }
 

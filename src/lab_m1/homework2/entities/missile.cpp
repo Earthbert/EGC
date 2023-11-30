@@ -21,7 +21,7 @@ bool Missile::travel(float deltaTime) {
 	position += glm::normalize(direction) * deltaTime * speed;
 	hitBoxCenter = position;
 
-	glm::mat4 translationMatrix = glm::translate(glm::mat4(1), glm::normalize(direction) * deltaTime * speed);
+	const glm::mat4 translationMatrix = glm::translate(glm::mat4(1), glm::normalize(direction) * deltaTime * speed);
 	renderInfo[0].model_matrix = translationMatrix * renderInfo[0].model_matrix;
 	if (distanceLeft <= 0)
 		return true;

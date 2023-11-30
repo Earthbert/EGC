@@ -1,12 +1,14 @@
 #pragma once
 
+#include "playerTank.h"
 #include "tank.h"
 
-class EnemyTank final : public Tank {
+class EnemyTank : public Tank {
 public:
-	EnemyTank(glm::vec3 center);
+	EnemyTank(PlayerTank& playerTank, glm::vec3 center);
+	~EnemyTank() override;
 
-	EnemyTank();
-	~EnemyTank();
+	EnemyTank &EnemyTank::operator=(const EnemyTank &other);
 
+	PlayerTank& playerTank;
 };

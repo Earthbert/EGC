@@ -36,8 +36,7 @@ void m1::Homework2::Update(float deltaTimeSeconds) {
 		if (explosions.empty()) {
 			std::cout << "GAME OVER" << std::endl;
 			Exit();
-		}
-		else {
+		} else {
 			explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
 				return explosion.update(deltaTimeSeconds);
 				}), explosions.end());
@@ -45,6 +44,7 @@ void m1::Homework2::Update(float deltaTimeSeconds) {
 		RenderEntities();
 		return;
 	}
+	CreateEnemies(deltaTimeSeconds);
 	UpdateEntities(deltaTimeSeconds);
 	CheckCollisions(deltaTimeSeconds);
 	RenderEntities();
@@ -112,7 +112,7 @@ void m1::Homework2::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods
 		return;
 
 	if (IS_BIT_SET(button, GLFW_MOUSE_BUTTON_LEFT)) {
-		auto missile = playerTank.shoot();
+		const auto missile = playerTank.shoot();
 		if (missile.has_value()) {
 			missiles.push_back(missile.value());
 		}
@@ -139,6 +139,10 @@ void m1::Homework2::RenderEntities() {
 
 	std::for_each(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
 		RenderObject(explosion);
+		});
+
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		RenderObject(enemyTank);
 		});
 }
 
@@ -194,9 +198,81 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 		return false;
 		}), missiles.end());
 
+	// EnemyTanks - Borders
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		std::for_each(borders.begin(), borders.end(), [&](Border& border) {
+			const auto result = enemyTank.checkCollision(border);
+			if (result.has_value()) {
+				enemyTank.getPushed(result.value());
+			}
+			});
+		});
+
+	// EnemyTanks - Houses
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		std::for_each(houses.begin(), houses.end(), [&](House& house) {
+			const auto result = enemyTank.checkCollision(house);
+			if (result.has_value()) {
+				enemyTank.getPushed(result.value());
+			}
+			});
+		});
+
+	// EnemyTanks - PlayerTank
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		const auto result = enemyTank.checkCollision(playerTank);
+		if (result.has_value()) {
+			enemyTank.getPushed(-(result.value() / 2.0f));
+			playerTank.getPushed((result.value() / 2.0f));
+			camera.Move(glm::length(result.value() / 2.0f), -(result.value()));
+		}
+		});
+
+	// EnemyTanks - EnemyTanks
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& otherEnemyTank) {
+			if (&enemyTank == &otherEnemyTank)
+				return;
+			const auto result = enemyTank.checkCollision(otherEnemyTank);
+			if (result.has_value()) {
+				enemyTank.getPushed(-(result.value() / 2.0f));
+				otherEnemyTank.getPushed((result.value() / 2.0f));
+			}
+			});
+		});
+
+	// EnemyTanks - Missiles
+	enemyTanks.erase(std::remove_if(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		bool died = false;
+		missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
+			const auto result = enemyTank.checkCollision(missile);
+			if (result.has_value()) {
+				auto hitResult = enemyTank.takeDamage();
+				if (hitResult.has_value()) {
+					explosions.emplace_back(hitResult.value());
+					died = true;
+				}
+				return true;
+			}
+			return false;
+			}), missiles.end());
+		return died;
+		}), enemyTanks.end());
 }
 
-void m1::Homework2::CreateEnemies() {}
+void m1::Homework2::CreateEnemies(float deltaTimeSeconds) {
+	enemyTimer += deltaTimeSeconds;
+	if (enemyTimer > HW2_SPAWN_ENEMY_COOLDOWN) {
+		enemyTimer = 0;
+
+		glm::vec3 center;
+		center.x = generator.getRandomFloat(-(HW2_PLANE_LENGTH / 2) + HW2_TANK_RADIUS, (HW2_PLANE_LENGTH / 2) - HW2_TANK_RADIUS);
+		center.y = 0;
+		center.z = generator.getRandomFloat(-(HW2_PLANE_LENGTH / 2) + HW2_TANK_RADIUS, (HW2_PLANE_LENGTH / 2) - HW2_TANK_RADIUS);
+
+		enemyTanks.emplace_back(playerTank, center);
+	}
+}
 
 void m1::Homework2::RenderObject(Entity& entity) {
 	for (auto& renderInfo : entity.getRenderInfo()) {

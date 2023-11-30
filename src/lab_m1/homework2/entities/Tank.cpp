@@ -10,10 +10,12 @@ Tank::Tank(const glm::vec3 center) : Collidable(center, HW2_TANK_RADIUS) {
 	// Create render info for the tank
 	// 0 - track 1 - body 2 - turret 3 - cannon
 	{
-		renderInfo.push_back(RenderInfo{ HW2_TRACK_MESH, HW2_BASIC_SHADER, glm::mat4(1), RGB_LIGHT_GREY });
-		renderInfo.push_back(RenderInfo{ HW2_BODY_MESH, HW2_BASIC_SHADER, glm::mat4(1), RGB_MILITARY_BLUE });
-		renderInfo.push_back(RenderInfo{ HW2_TURRET_MESH, HW2_BASIC_SHADER, glm::mat4(1), RGB_MILITARY_GREY });
-		renderInfo.push_back(RenderInfo{ HW2_CANNON_MESH, HW2_BASIC_SHADER, glm::mat4(1), RGB_LIGHT_GREY });
+		glm::mat4 modelMatrix = glm::translate(glm::mat4(1), center);
+
+		renderInfo.push_back(RenderInfo{ HW2_TRACK_MESH, HW2_BASIC_SHADER, modelMatrix, RGB_LIGHT_GREY });
+		renderInfo.push_back(RenderInfo{ HW2_BODY_MESH, HW2_BASIC_SHADER, modelMatrix, RGB_MILITARY_BLUE });
+		renderInfo.push_back(RenderInfo{ HW2_TURRET_MESH, HW2_BASIC_SHADER, modelMatrix, RGB_MILITARY_GREY });
+		renderInfo.push_back(RenderInfo{ HW2_CANNON_MESH, HW2_BASIC_SHADER, modelMatrix, RGB_LIGHT_GREY });
 	}
 }
 

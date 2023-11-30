@@ -38,7 +38,7 @@ namespace m1
 		void UpdateEntities(float deltaTimeSeconds);
 		void CheckCollisions(float deltaTimeSeconds);
 
-		void CreateEnemies();
+		void CreateEnemies(float deltaTimeSeconds);
 		void RenderObject(Entity &entity);
 		void RenderUsingBasicShader(Mesh* mesh, const glm::mat4& modelMatrix, const glm::vec3& color);
 		void CreateShaders();
@@ -62,6 +62,7 @@ namespace m1
 
 		// Game logic
 		bool gameOver = false;
+		float enemyTimer = 0.0f;
 
 		// Minimap
 		bool renderMinimap;

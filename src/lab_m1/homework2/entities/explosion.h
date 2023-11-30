@@ -1,11 +1,11 @@
 #pragma once
 #include "Entity.h"
 
-class Explosion : public Entity {
+class Explosion final : public Entity {
 public:
 	Explosion(glm::vec3 position, float size);
 	Explosion();
-	~Explosion();
+	~Explosion() override;
 
 	bool update(float deltaTimeSeconds);
 
