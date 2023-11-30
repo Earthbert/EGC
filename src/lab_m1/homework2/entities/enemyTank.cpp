@@ -14,7 +14,7 @@ EnemyTank& EnemyTank::operator=(const EnemyTank& other) = default;
 
 std::optional<Missile> EnemyTank::updateEnemyTank(float deltaTimeSeconds) {
 	update(deltaTimeSeconds);
-
+	updateState(deltaTimeSeconds);
 	return targetPlayerTank(deltaTimeSeconds);
 }
 
@@ -41,6 +41,32 @@ std::optional<Missile> EnemyTank::targetPlayerTank(float deltaTimeSeconds) {
 	}
 
 	return {};
+}
+
+void EnemyTank::updateState(float deltaTimeSeconds) {
+	currentStateTimer -= deltaTimeSeconds;
+
+	if (currentStateTimer <= 0) {
+		currentStateTimer = generator.getRandomFloat(1, 5);
+		currentState = static_cast<MovementState>(generator.getRandomInt(0, 4));
+	}
+
+	switch (currentState) {
+	case MovementState::Idle:
+		break;
+	case MovementState::MovingForward:
+		moveForward(deltaTimeSeconds);
+		break;
+	case MovementState::MovingBackward:
+		moveBackward(deltaTimeSeconds);
+		break;
+	case MovementState::RotatingLeft:
+		rotateLeft(deltaTimeSeconds);
+		break;
+	case MovementState::RotatingRight:
+		rotateRight(deltaTimeSeconds);
+		break;
+	}
 }
 
 

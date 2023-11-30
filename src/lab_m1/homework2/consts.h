@@ -31,3 +31,7 @@
 // Minimap
 #define HW2_MINIMAP_PROPORTION 2
 #define HW2_MINIMAP_BORDER 5
+// Enemy States
+#define HW2_IDLE_MAX_TIME 5.0f
+#define HW2_MOVE_MAX_TIME 4.0f
+#define HW2_ROTATE_MAX_TIME 2.0f
