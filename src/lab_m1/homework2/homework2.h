@@ -7,6 +7,7 @@
 #include "entities/enemyTank.h"
 #include "entities/ground.h"
 #include "entities/house.h"
+#include "entities/minimapBg.h"
 #include "entities/playerTank.h"
 #include "entities/tank.h"
 #include "lab_m1/homework1/entities.h"
@@ -62,9 +63,11 @@ namespace m1
 
 		// Game logic
 		bool gameOver = false;
+		float gameOverTimer = 60.0f;
 		float enemyTimer = 0.0f;
 
 		// Minimap
+		MinimapBg minimapBg;
 		bool renderMinimap;
 		glm::mat4 minimapViewMatrix;
 		glm::mat4 minimapProjectionMatrix;

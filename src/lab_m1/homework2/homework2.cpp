@@ -16,7 +16,7 @@ void m1::Homework2::Init() {
 	camera = HW2_Camera();
 
 	minimapViewMatrix = glm::lookAt(glm::vec3(0, 50, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
-	minimapProjectionMatrix = glm::ortho(-HW2_PLANE_LENGTH / 2, HW2_PLANE_LENGTH / 2, -HW2_PLANE_LENGTH / 2, HW2_PLANE_LENGTH / 2, 0.01f, 200.0f);
+	minimapProjectionMatrix = glm::ortho(-HW2_PLANE_LENGTH / 2 - HW2_MINIMAP_BORDER, HW2_PLANE_LENGTH / 2 + HW2_MINIMAP_BORDER, -HW2_PLANE_LENGTH / 2 - HW2_MINIMAP_BORDER, HW2_PLANE_LENGTH / 2 + HW2_MINIMAP_BORDER, 0.01f, 200.0f);
 
 	CreateShaders();
 	CreateMeshes();
@@ -32,6 +32,10 @@ void m1::Homework2::FrameStart() {
 }
 
 void m1::Homework2::Update(float deltaTimeSeconds) {
+	gameOverTimer -= deltaTimeSeconds;
+	if (gameOverTimer < 0) {
+		gameOver = true;
+	};
 	if (gameOver) {
 		if (explosions.empty()) {
 			std::cout << "GAME OVER" << std::endl;
@@ -379,6 +383,7 @@ void m1::Homework2::CreateMeshes() {
 
 void m1::Homework2::CreateEntities() {
 	ground = Ground();
+	minimapBg = MinimapBg();
 	playerTank = PlayerTank(glm::vec4(0));
 
 	// Create Houses
@@ -417,6 +422,7 @@ void m1::Homework2::RenderMinimap() {
 	glViewport(HW2_MINIMAP_BORDER, resolution.y - HW2_MINIMAP_BORDER - minimapLenght,
 		minimapLenght, minimapLenght);
 
+	RenderObject(minimapBg);
 	RenderEntities();
 
 	renderMinimap = false;
