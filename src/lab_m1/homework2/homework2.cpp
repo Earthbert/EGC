@@ -152,6 +152,14 @@ void m1::Homework2::UpdateEntities(float deltaTimeSeconds) {
 	missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
 		return missile.travel(deltaTimeSeconds);
 		}), missiles.end());
+
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
+		enemyTank.update(deltaTimeSeconds);
+		});
+
+	explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
+		return explosion.update(deltaTimeSeconds);
+		}), explosions.end());
 }
 
 void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
@@ -180,7 +188,11 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 			return false;
 		return std::any_of(houses.begin(), houses.end(), [&](House& house) {
 			const auto result = missile.checkCollision(house);
-			return result.has_value();
+			if (result.has_value()) {
+				explosions.emplace_back(missile.explode());
+				return true;
+			}
+			return false;
 			});
 		}), missiles.end());
 
@@ -188,6 +200,7 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 	missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
 		const auto result = playerTank.checkCollision(missile);
 		if (result.has_value()) {
+			explosions.emplace_back(missile.explode());
 			auto hitResult = playerTank.takeDamage();
 			if (hitResult.has_value()) {
 				explosions.emplace_back(hitResult.value());
@@ -247,6 +260,7 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 		missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
 			const auto result = enemyTank.checkCollision(missile);
 			if (result.has_value()) {
+				explosions.emplace_back(missile.explode());
 				auto hitResult = enemyTank.takeDamage();
 				if (hitResult.has_value()) {
 					explosions.emplace_back(hitResult.value());

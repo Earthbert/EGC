@@ -22,3 +22,4 @@
 #define RGB_MILITARY_BROWN glm::vec3(0.5, 0.25, 0.25)
 #define RGB_SKY_BLUE glm::vec3(0.5, 0.5, 1)
 #define RGB_BRICK glm::vec3(0.85, 0.5, 0.5)
+#define RGB_DARK_RED glm::vec3(0.5, 0, 0)

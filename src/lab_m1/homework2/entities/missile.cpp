@@ -1,5 +1,6 @@
 #include "lab_m1/homework2/entities/missile.h"
 
+#include "explosion.h"
 #include "lab_m1/homework2/colors.h"
 #include "lab_m1/homework2/consts.h"
 
@@ -26,4 +27,8 @@ bool Missile::travel(float deltaTime) {
 	if (distanceLeft <= 0)
 		return true;
 	return false;
+}
+
+Explosion Missile::explode() const {
+	return {position, 8 * HW2_MISSILE_RADIUS};
 }

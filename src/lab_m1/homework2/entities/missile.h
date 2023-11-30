@@ -1,6 +1,7 @@
 #pragma once
 #include "collidable.h"
 #include "entity.h"
+#include "explosion.h"
 
 class Missile : public Entity, public Collidable {
 public:
@@ -8,6 +9,8 @@ public:
 	~Missile();
 
 	bool travel(float deltaTime);
+	Explosion explode() const;
+
 private:
 	glm::vec3 position;
 	glm::vec3 direction;
