@@ -63,7 +63,7 @@ namespace m1
 
 		// Game logic
 		bool gameOver = false;
-		float gameOverTimer = 60.0f;
+		float gameOverTimer = 600.0f;
 		float enemyTimer = 0.0f;
 
 		// Minimap

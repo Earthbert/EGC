@@ -158,7 +158,10 @@ void m1::Homework2::UpdateEntities(float deltaTimeSeconds) {
 		}), missiles.end());
 
 	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
-		enemyTank.update(deltaTimeSeconds);
+		const auto result = enemyTank.updateEnemyTank(deltaTimeSeconds);
+		if (result.has_value()) {
+			missiles.push_back(result.value());
+		}
 		});
 
 	explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [&](Explosion& explosion) {
