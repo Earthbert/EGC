@@ -19,6 +19,7 @@ void main()
 {
     // TODO(student): Compute world space vertex position and normal,
     // and send them to the fragment shader
-
+    world_normal = normalize(vec3(Model * vec4(v_normal, 1.0)));
+    world_position = vec3(Model * vec4(v_position, 1.0));
     gl_Position = Projection * View * Model * vec4(v_position, 1.0);
 }
