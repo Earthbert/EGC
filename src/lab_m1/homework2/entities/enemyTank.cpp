@@ -17,6 +17,10 @@ EnemyTank::~EnemyTank() = default;
 EnemyTank& EnemyTank::operator=(const EnemyTank& other) = default;
 
 std::optional<Missile> EnemyTank::updateEnemyTank(float deltaTimeSeconds) {
+	if (isAlive == false) {
+		return {};
+	}
+
 	update(deltaTimeSeconds);
 	updateState(deltaTimeSeconds);
 	return targetPlayerTank(deltaTimeSeconds);

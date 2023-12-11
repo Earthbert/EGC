@@ -3,6 +3,7 @@
 #include "entities/entity.h"
 #include "random_num.h"
 #include "components/simple_scene.h"
+#include "components/text_renderer.h"
 #include "entities/border.h"
 #include "entities/enemyTank.h"
 #include "entities/Entity.h"

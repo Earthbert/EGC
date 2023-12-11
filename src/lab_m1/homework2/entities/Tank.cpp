@@ -86,6 +86,10 @@ void Tank::rotateTurretRight(const float deltaTimeSeconds) {
 }
 
 void Tank::update(float deltaTimeSeconds) {
+	if (isAlive == false) {
+				return;
+	}
+
 	if (shotTimer < HW2_SHOT_COOLDOWN) {
 		shotTimer += deltaTimeSeconds;
 	}
@@ -103,16 +107,23 @@ void Tank::getPushed(const glm::vec3& direction) {
 }
 
 std::optional<Explosion> Tank::takeDamage() {
+	if (isAlive == false) {
+		return {};
+	}
+	
 	health--;
 	if (health <= 0) {
-		this->radius = 0;
-		renderInfo.erase(renderInfo.begin(), renderInfo.end());
+		isAlive = false;
 		return Explosion(this->center, 4 * HW2_TANK_RADIUS);
 	}
 	return {};
 }
 
 std::optional<Missile> Tank::shoot() {
+	if (isAlive == false) {
+		return {};
+	}
+
 	if (shotTimer >= HW2_SHOT_COOLDOWN) {
 		shotTimer = 0;
 		glm::vec3 missilePosition = center + glm::normalize(turretDirection) * HW2_CANNON_LENGTH;

@@ -38,6 +38,8 @@ protected:
 	glm::vec3 tankDirection;
 	glm::vec3 turretDirection;
 
+	bool isAlive = true;
+
 	int health = 3;
 
 	float shotTimer  = 0;

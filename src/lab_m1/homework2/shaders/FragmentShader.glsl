@@ -11,7 +11,9 @@ void main()
     if (health == -1)
         out_color = vec4(in_color, 1);
     else {
-        float alpha = (float(health) / 3);
+        float alpha = 1;
+        if (health < 3)
+            alpha = (float(health + 1) / 4);
 		out_color = vec4(in_color * alpha, 1);
     }
 }

@@ -4,6 +4,7 @@
 
 #include "colors.h"
 #include "consts.h"
+#include "components/text_renderer.h"
 #include "entities/entity.h"
 #include "entities/ground.h"
 
@@ -268,8 +269,7 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 		});
 
 	// EnemyTanks - Missiles
-	enemyTanks.erase(std::remove_if(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
-		bool died = false;
+	std::for_each(enemyTanks.begin(), enemyTanks.end(), [&](EnemyTank& enemyTank) {
 		missiles.erase(std::remove_if(missiles.begin(), missiles.end(), [&](Missile& missile) {
 			const auto result = enemyTank.checkCollision(missile);
 			if (result.has_value()) {
@@ -278,14 +278,12 @@ void m1::Homework2::CheckCollisions(float deltaTimeSeconds) {
 				if (hitResult.has_value()) {
 					explosions.emplace_back(hitResult.value());
 					score += 10;
-					died = true;
 				}
 				return true;
 			}
 			return false;
 			}), missiles.end());
-		return died;
-		}), enemyTanks.end());
+		});
 }
 
 void m1::Homework2::CreateEnemies(float deltaTimeSeconds) {
